@@ -66,6 +66,15 @@ LIRCDEV="/var/run/lirc/lircd"
 [ -e /var/run/lirc/lircd.irtrans ] && LIRCDEV="/var/run/lirc/lircd.irtrans"
 XBMC_ARGS="--standalone -fs --lircdev $LIRCDEV"
 
+if [ ! -f /storage/.bashrc ]; then
+  touch /storage/.bashrc
+  echo "export XBMC_HOME=/storage/debug/plexht" >> /storage/.bashrc
+else
+  if ! grep -q "export XBMC_HOME=/storage/debug/plexht" /storage/.bashrc; then
+    echo "export XBMC_HOME=/storage/debug/plexht" >> /storage/.bashrc
+  fi
+fi
+
 if [ "$DEBUG" = yes ]; then
   XBMC_ARGS="$XBMC_ARGS --debug"
 fi
