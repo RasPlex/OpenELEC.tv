@@ -35,3 +35,4 @@ mkpkg-temp
 /tmp
 /rasplex-installer
 /rasplex-update-server
+tools/breakpad/bin/symbols/
