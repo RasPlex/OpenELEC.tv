@@ -23,8 +23,7 @@
 #
 # runlevels: openelec, textmode
 
-if [ $(cat /proc/meminfo | grep MemTotal | awk '{print $2}') -lt 300000 ]; then
-    progress "256 MB or low memory Pi detected, activating Swap"
+    progress "Activating swap... please wait"
     . /etc/swap.conf
 
     if [ -f $HOME/.config/swap.conf ]; then
@@ -53,4 +52,3 @@ if [ $(cat /proc/meminfo | grep MemTotal | awk '{print $2}') -lt 300000 ]; then
       fi
     )&
 
-fi

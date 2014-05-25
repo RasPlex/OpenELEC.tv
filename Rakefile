@@ -75,7 +75,7 @@ eos
   end
 
   desc "Force a (re)build full PHT package at [version], wip by default"
-  task :plex, [:version] do | t, args |
+  task :plex, [:version] => [:info] do | t, args |
     if args[:version].nil?
       version = "wip"
 
@@ -92,6 +92,7 @@ eos
 RASPLEX_VERSION=#{version}
 RASPLEX_REF=#{version}
 eos
+    puts version_str
     File.open(build_config_path, 'a') { |file| file.write(version_str) }
   end
 
