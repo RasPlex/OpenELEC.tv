@@ -2,6 +2,7 @@ require 'yaml'
 
 config_path       = File.dirname(File.expand_path(__FILE__)) + '/config.yml'
 build_config_path = File.dirname(File.expand_path(__FILE__)) + '/config/rasplex'
+root_dir          = File.dirname(File.expand_path(__FILE__))
 
 Rake::TaskManager.record_task_metadata = true
 
@@ -76,17 +77,26 @@ eos
 
   desc "Force a (re)build full PHT package at [version], wip by default"
   task :plex, [:version] => [:info] do | t, args |
+
+    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['oeversion']}-release"
+    sh "rm -rf #{build_dir}/.stamps/plexht"
+    sh "mkdir -p #{build_dir}"
+
     if args[:version].nil?
       version = "wip"
-
-      build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['oeversion']}-release"
-      sh "rm -rf #{build_dir}/.stamps/plexht"
-      sh "mkdir -p #{build_dir}"
       # Create the symlink to use for build
-      sh "ln -sf ../plex-home-theater #{build_dir}/plexht-wip"
+      work_dir = "#{build_dir}/plexht-wip"
+      sh "ln -sf #{root_dir}/../plex-home-theater #{work_dir}"
     else
       version = args[:version]
+      work_dir = "#{root_dir}/#{build_dir}/plexht-#{version}"
+      sh "rm -rf #{root_dir}/#{build_dir}/plexht-*"
+      sh "mkdir -p #{work_dir}"
+      sh "git --work-tree=#{work_dir}  --git-dir=#{root_dir}/plex-home-theater/.git checkout #{version} -- #{work_dir}"
     end
+
+    File.open("#{work_dir}/GitRevision.txt", 'w') { |file| file.write(version) }
+    File.open("#{work_dir}/rasplex_version.txt", 'w') { |file| file.write(version.gsub("RP-","")) }
     
     version_str = <<-eos
 RASPLEX_VERSION=#{version}
@@ -98,7 +108,12 @@ eos
 
   desc "Force a rebuild of the kernel, initramfs, and firmware"
   task :kernel do
-    sh "echo kernel"
+
+    kernel_pkgs = ["linux","linux-drivers","linux-initramfs","busybox","busybox-initramfs", "bcm2835-bootloader", "bcm2835-driver"] 
+    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['oeversion']}-release"
+    kernel_pkgs.each do |pkg|
+      sh "rm -rf #{build_dir}/.stamps/#{pkg}"
+    end
   end
 
   desc "Force a clean rebuild (this will take a long time)"
