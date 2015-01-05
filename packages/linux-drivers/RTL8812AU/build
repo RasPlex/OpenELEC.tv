@@ -16,36 +16,16 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="RTL8812AU"
-PKG_VERSION="b22cbdf"
-PKG_REV="1"
-PKG_ARCH="any"
-PKG_LICENSE="GPL"
-PKG_SITE="git@github.com:wuzzeb/rtl8812AU_8821AU_linux.git"
-PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain linux"
-PKG_NEED_UNPACK="$LINUX_DEPENDS"
-PKG_PRIORITY="optional"
-PKG_SECTION="driver"
-PKG_SHORTDESC="Realtek RTL8812AU Linux 3.x driver"
-PKG_LONGDESC="Realtek RTL8812AU Linux 3.x driver"
+. config/options $1
 
-PKG_IS_ADDON="no"
-PKG_AUTORECONF="no"
+cd $PKG_BUILD
 
-pre_make_target() {
-  unset LDFLAGS
-}
+unset LDFLAGS
 
-make_target() {
-  make V=1 \
-       ARCH=$TARGET_ARCH \
-       KSRC=$(kernel_path) \
-       CROSS_COMPILE=$TARGET_PREFIX \
-       CONFIG_POWER_SAVING=n
-}
+sed -i 's/\^M//g' os_dep/linux/ioctl_cfg80211.c
 
-makeinstall_target() {
-  mkdir -p $INSTALL/lib/modules/$(get_module_dir)/$PKG_NAME
-    cp *.ko $INSTALL/lib/modules/$(get_module_dir)/$PKG_NAME
-}
+make V=1 \
+     ARCH=$TARGET_ARCH \
+     KSRC=$(kernel_path) \
+     CROSS_COMPILE=$TARGET_PREFIX \
+     CONFIG_POWER_SAVING=n

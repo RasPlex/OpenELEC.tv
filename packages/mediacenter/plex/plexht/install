@@ -96,6 +96,10 @@ mkdir -p $INSTALL/usr/bin/
 mkdir -p $INSTALL/usr/share/xbmc/tools/
 
 cp $PKG_BUILD/plex/Resources/openelec_install_update.sh $INSTALL/usr/share/xbmc/tools/openelec_install_update.sh
+
+# Ensure ca certs and other system resources are installed
+cp -r $PKG_BUILD/plex/Resources/system/* $INSTALL/usr/share/xbmc/system/
+
 chmod +x $INSTALL/usr/share/xbmc/tools/openelec_install_update.sh
 cp $PKG_DIR/config/advancedsettings.xml $INSTALL/usr/share/xbmc/system/
 cp $PKG_DIR/config/advancedsettings.xml $INSTALL/usr/share/xbmc/
