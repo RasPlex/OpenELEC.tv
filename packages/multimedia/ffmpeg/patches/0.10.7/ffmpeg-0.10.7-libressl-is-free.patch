@@ -1,0 +1,108 @@
+diff -Naur ffmpeg-0.10.7/configure ffmpeg-0.10.7.patch/configure
+--- ffmpeg-0.10.7/configure	Wed Apr 10 03:52:33 2013
++++ ffmpeg-0.10.7.patch/configure	Tue Dec  2 15:03:21 2014
+@@ -188,6 +188,7 @@
+                            native (de)muxer exists [no]
+   --enable-libopenjpeg     enable JPEG 2000 encoding/decoding via OpenJPEG [no]
+   --enable-libpulse        enable Pulseaudio input via libpulse [no]
++  --enable-libressl        enable libressl [no]
+   --enable-librtmp         enable RTMP[E] support via librtmp [no]
+   --enable-libschroedinger enable Dirac support via libschroedinger [no]
+   --enable-libspeex        enable Speex support via libspeex [no]
+@@ -1041,6 +1042,7 @@
+     libopencv
+     libopenjpeg
+     libpulse
++    libressl
+     librtmp
+     libschroedinger
+     libspeex
+@@ -1641,7 +1643,7 @@
+ rtmp_protocol_select="tcp_protocol"
+ rtp_protocol_select="udp_protocol"
+ tcp_protocol_deps="network"
+-tls_protocol_deps_any="openssl gnutls"
++tls_protocol_deps_any="libressl openssl gnutls"
+ tls_protocol_select="tcp_protocol"
+ udp_protocol_deps="network"
+ 
+@@ -3144,6 +3146,10 @@
+ enabled libopencv  && require_pkg_config opencv opencv/cxcore.h cvCreateImageHeader
+ enabled libopenjpeg && require libopenjpeg openjpeg.h opj_version -lopenjpeg
+ enabled libpulse && require_pkg_config libpulse-simple pulse/simple.h pa_simple_new
++enabled libressl && { check_lib openssl/ssl.h SSL_library_init -lssl -lcrypto ||
++                      check_lib openssl/ssl.h SSL_library_init -lssl32 -leay32 ||
++                      check_lib openssl/ssl.h SSL_library_init -lssl -lcrypto -lws2_32 -lgdi32 ||
++                      die "ERROR: libressl not found"; }
+ enabled librtmp    && require_pkg_config librtmp librtmp/rtmp.h RTMP_Socket
+ enabled libschroedinger && require_pkg_config schroedinger-1.0 schroedinger/schro.h schro_init
+ enabled libspeex   && require  libspeex speex/speex.h speex_decoder_init -lspeex
+diff -Naur ffmpeg-0.10.7/libavformat/network.c ffmpeg-0.10.7.patch/libavformat/network.c
+--- ffmpeg-0.10.7/libavformat/network.c	Wed Apr 10 03:52:17 2013
++++ ffmpeg-0.10.7.patch/libavformat/network.c	Tue Dec  2 14:56:11 2014
+@@ -32,7 +32,7 @@
+ #endif
+ #endif
+ 
+-#if CONFIG_OPENSSL
++#if CONFIG_OPENSSL || CONFIG_LIBRESSL
+ #include <openssl/ssl.h>
+ static int openssl_init;
+ #if THREADS
+@@ -68,7 +68,7 @@
+ void ff_tls_init(void)
+ {
+     avpriv_lock_avformat();
+-#if CONFIG_OPENSSL
++#if CONFIG_OPENSSL || CONFIG_LIBRESSL
+     if (!openssl_init) {
+         SSL_library_init();
+         SSL_load_error_strings();
+@@ -100,7 +100,7 @@
+ void ff_tls_deinit(void)
+ {
+     avpriv_lock_avformat();
+-#if CONFIG_OPENSSL
++#if CONFIG_OPENSSL || CONFIG_LIBRESSL
+     openssl_init--;
+     if (!openssl_init) {
+ #if THREADS
+diff -Naur ffmpeg-0.10.7/libavformat/tls.c ffmpeg-0.10.7.patch/libavformat/tls.c
+--- ffmpeg-0.10.7/libavformat/tls.c	Fri Mar 22 04:16:22 2013
++++ ffmpeg-0.10.7.patch/libavformat/tls.c	Tue Dec  2 14:58:36 2014
+@@ -33,7 +33,7 @@
+         if (c->cred) \
+             gnutls_certificate_free_credentials(c->cred); \
+     } while (0)
+-#elif CONFIG_OPENSSL
++#elif CONFIG_OPENSSL || CONFIG_LIBRESSL
+ #include <openssl/bio.h>
+ #include <openssl/ssl.h>
+ #include <openssl/err.h>
+@@ -60,7 +60,7 @@
+ #if CONFIG_GNUTLS
+     gnutls_session_t session;
+     gnutls_certificate_credentials_t cred;
+-#elif CONFIG_OPENSSL
++#elif CONFIG_OPENSSL || CONFIG_LIBRESSL
+     SSL_CTX *ctx;
+     SSL *ssl;
+ #endif
+@@ -80,7 +80,7 @@
+         p.events = POLLOUT;
+     else
+         p.events = POLLIN;
+-#elif CONFIG_OPENSSL
++#elif CONFIG_OPENSSL || CONFIG_LIBRESSL
+     ret = SSL_get_error(c->ssl, ret);
+     if (ret == SSL_ERROR_WANT_READ) {
+         p.events = POLLIN;
+@@ -163,7 +163,7 @@
+         if ((ret = do_tls_poll(h, ret)) < 0)
+             goto fail;
+     }
+-#elif CONFIG_OPENSSL
++#elif CONFIG_OPENSSL || CONFIG_LIBRESSL
+     c->ctx = SSL_CTX_new(TLSv1_client_method());
+     if (!c->ctx) {
+         av_log(h, AV_LOG_ERROR, "%s\n", ERR_error_string(ERR_get_error(), NULL));
