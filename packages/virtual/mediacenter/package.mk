@@ -32,6 +32,15 @@ PKG_LONGDESC=""
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+if [ "$MEDIACENTER" = "plexht" ]; then
+  PKG_DEPENDS_TARGET="toolchain $MEDIACENTER"
+
+  # some python stuff needed for various addons
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET Imaging"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET simplejson"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pycrypto"
+fi
+
 for i in $SKINS; do
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $MEDIACENTER-theme-$i"
 done
