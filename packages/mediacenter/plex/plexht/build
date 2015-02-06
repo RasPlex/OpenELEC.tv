@@ -75,6 +75,7 @@ cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
       $SRC_DIR
 
 pwd
+      #-DENABLE_TESTING=on \
 #make VERBOSE=1 -j`nproc`
 ninja -j `nproc`
 

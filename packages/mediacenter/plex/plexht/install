@@ -35,6 +35,7 @@ mkdir -p $INSTALL/usr/bin
 mkdir -p $INSTALL/usr/lib/plexhometheater/system/players/dvdplayer/
 mkdir -p $INSTALL/usr/lib/plexhometheater/system
   cp $PKG_BUILD/build/plex/plexhometheater $INSTALL/usr/lib/plexhometheater
+[ -e $PKG_BUILD/build/plex/PlexHomeTheaterTests ] &&  cp $PKG_BUILD/build/plex/PlexHomeTheaterTests $INSTALL/usr/lib/PlexHomeTheaterTests
 
 cd $PKG_BUILD
 find build/lib -not \( -name CMakeFiles -prune \) \
