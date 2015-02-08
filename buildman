@@ -27,7 +27,7 @@ class Config:
         elif args.wip is not None:
             self.version = "wip"
 
-        if args.rpi2 is not None:
+        if args.rpi2:
             self.project = "RPi2"
         else:
             self.project = "RPi"
@@ -41,7 +41,7 @@ class Config:
         self.distroname = "rasplex"
         self.devtools = False
         self.tmpdir = "{}/tmp".format(SCRIPTDIR)
-        self.outimagename = "{}-{}.img".format(self.distroname,self.version)
+        self.outimagename = "{}-{}-{}.img".format(self.distroname,self.project,self.version)
         self.outimagefile = "{}/{}".format(self.tmpdir,self.outimagename)
         self.targetdir = "{}/target".format(SCRIPTDIR)
         self.rpversion = self.version.replace("RP-","")

@@ -47,7 +47,7 @@ cd $INSTALL
 cd -
 
 cd $PKG_BUILD
-LDFLAGS="" make $KERNEL_IMAGE
+LDFLAGS="" make $KERNEL_IMAGE $KERNEL_MAKE_EXTRACMD
 
 if [ "$PERF_SUPPORT" = "yes" -a "$DEVTOOLS" = "yes" ]; then
   ( cd tools/perf
