@@ -53,7 +53,7 @@ TOOLCHAIN_DIR="$ROOT/$BUILD/toolchain"
 
 echo $TOOLCHAIN_DIR
 echo $SRC_DIR
-export PYTHON_EXEC="$TOOLCHAIN_DIR/armv6zk-openelec-linux-gnueabi/sysroot/usr/bin/python2.7"
+export PYTHON_EXEC="$SYSROOT_PREFIX/usr/bin/python2.7"
 cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
       -DCMAKE_INSTALL_PREFIX=$INSTALL/usr \
       -DENABLE_PYTHON=on \
@@ -62,9 +62,9 @@ cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
       -DLIBUSBDIR=$SYSROOT_PREFIX/usr \
       -DENABLE_DUMP_SYMBOLS=on \
       -DOPTIONAL_INCLUDE_DIR=$SYSROOT_PREFIX/usr/include \
-      -DCMAKE_INCLUDE_PATH="$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux;$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads;$TOOLCHAIN_DIR/armv6zk-openelec-linux-gnueabi/sysroot/usr/include/python2.7/" \
+      -DCMAKE_INCLUDE_PATH="$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux;$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads;$SYSROOT_PREFIX/usr/include/python2.7/" \
       -DPYTHON_EXEC="$PYTHON_EXEC" \
-      -DEXTERNAL_PYTHON_HOME="$TOOLCHAIN_DIR/armv6zk-openelec-linux-gnueabi/sysroot/usr" \
+      -DEXTERNAL_PYTHON_HOME="$SYSROOT_PREFIX/sysroot/usr" \
       -DHOST_BREAKPAD_HOME="$ROOT/tools/breakpad" \
       -DIMAGE_BREAKPAD_HOME="$ROOT/$BUILD/image/system/usr" \
       -DTARGET_PLATFORM=RPI \
@@ -80,7 +80,7 @@ pwd
 ninja -j `nproc`
 
 # generate breakpad symbols
-ninja plex/CMakeFiles/PlexHomeTheater_symbols 
+ninja plex/CMakeFiles/PlexHomeTheater_symbols
 
 # Strip the executable now that we have our breakpad symbols
-$TOOLCHAIN_DIR/bin/armv6zk-openelec-linux-gnueabi-strip plex/plexhometheater
+$SYSROOT_PREFIX/../bin/strip plex/plexhometheater

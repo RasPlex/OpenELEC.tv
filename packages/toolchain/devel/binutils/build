@@ -36,6 +36,7 @@ LDFLAGS=""
 # Disable PPL version check as the PPL major version number has been bumped so the check fails.
   PPL_CHECK="--disable-ppl-version-check"
 
+set -x
 cd $PKG_BUILD
 mkdir -p objdir && cd objdir
 ../configure --host=$HOST_NAME \

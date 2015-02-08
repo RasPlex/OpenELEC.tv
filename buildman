@@ -27,6 +27,11 @@ class Config:
         elif args.wip is not None:
             self.version = "wip"
 
+        if args.rpi2 is not None:
+            self.project = "RPi2"
+        else:
+            self.project = "RPi"
+
         self.ci = args.ci
         self.force = args.force
     	self.rebuild = args.rebuild
@@ -40,7 +45,7 @@ class Config:
         self.outimagefile = "{}/{}".format(self.tmpdir,self.outimagename)
         self.targetdir = "{}/target".format(SCRIPTDIR)
         self.rpversion = self.version.replace("RP-","")
-        self.outfilename="{}-RPi.arm-{}".format(self.distroname,self.rpversion)
+        self.outfilename="{}-{}.arm-{}".format(self.distroname,self.project,self.rpversion)
 
         
         configstr=""" 
@@ -101,47 +106,47 @@ def  build(config):
         for stamp in kernel_stamps:
             if stamp != "":
                 print "deleting stamp {}".format(stamp)
-                os.system("rm -r {}/build.rasplex-RPi.arm-{}-{}/.stamps/{}".format(SCRIPTDIR,config.oeversion,config.buildtype,stamp))
+                os.system("rm -r {}/build.rasplex-{}.arm-{}-{}/.stamps/{}".format(SCRIPTDIR,config.project,config.oeversion,config.buildtype,stamp))
 
     if (config.force):
-        os.system("rm -r {}/build.rasplex-RPi.arm-{}-{}/.stamps/plexht".format(SCRIPTDIR,config.oeversion,config.buildtype))
+        os.system("rm -r {}/build.rasplex-{}.arm-{}-{}/.stamps/plexht".format(SCRIPTDIR,config.project,config.oeversion,config.buildtype))
 
     
     if config.version == "wip":
-        if not os.path.isdir("{}/build.rasplex-RPi.arm-{}-{}".format(SCRIPTDIR,config.oeversion,config.buildtype)):
-            os.mkdir("{}/build.rasplex-RPi.arm-{}-{}".format(SCRIPTDIR,config.oeversion,config.buildtype))
-        os.system("ln -sf {}/plex-home-theater {}/build.rasplex-RPi.arm-{}-{}/plexht-{}".format(SCRIPTDIR,SCRIPTDIR,config.oeversion,config.buildtype,config.version))
+        if not os.path.isdir("{}/build.rasplex-{}.arm-{}-{}".format(SCRIPTDIR,config.project,config.oeversion,config.buildtype)):
+            os.mkdir("{}/build.rasplex-{}.arm-{}-{}".format(SCRIPTDIR,config.project,config.oeversion,config.buildtype))
+        os.system("ln -sf {}/plex-home-theater {}/build.rasplex-{}.arm-{}-{}/plexht-{}".format(SCRIPTDIR,SCRIPTDIR,config.project,config.oeversion,config.buildtype,config.version))
         version = os.popen("git --git-dir={}/plex-home-theater/.git  rev-parse HEAD".format(SCRIPTDIR)).read().strip()
 
     else:
         print "Running build against ref {}".format(config.version)
-        os.system("mkdir -p {}/build.rasplex-RPi.arm-{}-{}/plexht-{}".format(SCRIPTDIR, config.oeversion, config.buildtype, config.version))
+        os.system("mkdir -p {}/build.rasplex-{}.arm-{}-{}/plexht-{}".format(SCRIPTDIR, config.project,config.oeversion, config.buildtype, config.version))
         version = os.popen("git --git-dir={}/plex-home-theater/.git  rev-parse {}".format(SCRIPTDIR, config.version)).read().strip()
         os.system("git --git-dir={}/plex-home-theater/.git  fetch".format(SCRIPTDIR))
         #os.system("git --git-dir={}/plex-home-theater/.git checkout {}".format(SCRIPTDIR,config.version)) 
-        os.system("git --work-tree={}/build.rasplex-RPi.arm-{}-{}/plexht-{}  --git-dir={}/plex-home-theater/.git checkout {} -- .".format(
-                                                                            SCRIPTDIR,config.oeversion,config.buildtype,config.version,SCRIPTDIR,config.version))
-        os.system("cp {}/tools/rasplex/sync-repo  {}/build.rasplex-RPi.arm-{}-{}/plexht-{}".format(SCRIPTDIR,SCRIPTDIR,config.oeversion,config.buildtype,config.version)) 
+        os.system("git --work-tree={}/build.rasplex-{}.arm-{}-{}/plexht-{}  --git-dir={}/plex-home-theater/.git checkout {} -- .".format(
+                                                                            SCRIPTDIR,config.project,config.oeversion,config.buildtype,config.version,SCRIPTDIR,config.version))
+        os.system("cp {}/tools/rasplex/sync-repo  {}/build.rasplex-{}.arm-{}-{}/plexht-{}".format(SCRIPTDIR,SCRIPTDIR,config.project,config.oeversion,config.buildtype,config.version)) 
 
-        verfile = open ("{}/build.rasplex-RPi.arm-{}-{}/plexht-{}/rasplex_version.txt".format(SCRIPTDIR,config.oeversion,config.buildtype,config.version),'w')
+        verfile = open ("{}/build.rasplex-{}.arm-{}-{}/plexht-{}/rasplex_version.txt".format(SCRIPTDIR,config.project,config.oeversion,config.buildtype,config.version),'w')
         verfile.write(config.version.replace("RP-",""))
         verfile.close()
 
 
-    verfile = open ("{}/build.rasplex-RPi.arm-{}-{}/plexht-{}/GitRevision.txt".format(SCRIPTDIR,config.oeversion,config.buildtype,config.version),'w')
+    verfile = open ("{}/build.rasplex-{}.arm-{}-{}/plexht-{}/GitRevision.txt".format(SCRIPTDIR,config.project,config.oeversion,config.buildtype,config.version),'w')
     verfile.write(version)
     verfile.close()
 
     if config.ci:
         print "building in CI mode"
-        pipe = os.popen("{} PROJECT=RPi ARCH=arm make release -j `nproc`".format(config.buildtype_str))
+        pipe = os.popen("{} PROJECT={} ARCH=arm make release -j `nproc`".format(config.buildtype_str, config.project))
         output = pipe.read()
         lines = output.split("\n")
         print lines[-9000:-1]
         
         rc = pipe.close()
     else:
-        rc = os.system("{} PROJECT=RPi ARCH=arm make release -j `nproc` || exit 2".format(config.buildtype_str))
+        rc = os.system("{} PROJECT={} ARCH=arm make release -j `nproc` || exit 2".format(config.buildtype_str, config.project))
 
 
     return rc
@@ -323,6 +328,7 @@ To generate an image from completed build tagged RP-X.X.X:\n
     parser.add_argument('-l', '--linkfast', action="store_true", help="Link PHT without linktime optimization")
     parser.add_argument('-k', '--kernel', action="store_true", help="Force kernel and initramfs rebuild")
     parser.add_argument('-c', '--ci', action="store_true", help="Run as CI")
+    parser.add_argument('-2', '--rpi2', action="store_true", help="Build for rpi2")
 
     args = parser.parse_args()
 

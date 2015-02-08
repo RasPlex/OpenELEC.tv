@@ -22,8 +22,10 @@
 
 . config/options $1
 
-VER=`ls $BUILD/linux*/modules/lib/modules`
-LINUX_MODULES_DIR=`echo $BUILD/linux*/modules/lib/modules/$VER/kernel`
+if [ -n "$INITRAMFS_MODULES" ]; then
+  VER=`ls $BUILD/linux*/modules/lib/modules`
+  LINUX_MODULES_DIR=`echo $BUILD/linux*/modules/lib/modules/$VER/kernel`
+fi
 
 if [ -n "$INITRAMFS_MODULES" ]; then
   mkdir -p $INSTALL/etc
