@@ -99,3 +99,8 @@ LINUX_DEPENDS="$PROJECT_DIR/$PROJECT/linux/linux.$TARGET_ARCH.conf $ROOT/package
 
 . config/graphic
 . config/path $1
+
+# read package options from $HOME if available
+  if [ -f "$HOME/.openelec/pkg.$1" ]; then
+    . $HOME/.openelec/pkg.$1
+  fi
