@@ -23,7 +23,7 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.rasplex.com"
 PKG_URL="https://github.com/RasPlex/plex-home-theatre/archive/$PKG_VERSION/rasplex-$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain boost Python zlib bzip2 systemd pciutils lzo pcre swig:host libass enca curl rtmpdump fontconfig fribidi tinyxml libjpeg-turbo libpng tiff freetype jasper libogg libcdio libmodplug libmpeg2 taglib libxml2 libxslt yajl sqlite libvorbis ffmpeg libshairplay libsamplerate flac SDL_mixer lame breakpad"
+PKG_DEPENDS_TARGET="toolchain ninja:host boost Python zlib bzip2 systemd pciutils lzo pcre swig:host libass enca curl rtmpdump fontconfig fribidi tinyxml libjpeg-turbo libpng tiff freetype jasper libogg libcdio libmodplug libmpeg2 taglib libxml2 libxslt yajl sqlite libvorbis ffmpeg libshairplay libsamplerate flac SDL_mixer lame breakpad"
 PKG_DEPENDS_HOST="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="mediacenter"
@@ -174,16 +174,14 @@ pre_configure_target() {
 # Todo: kodi segfaults on exit when building with LTO support
   strip_lto
 
-  export CFLAGS="$CFLAGS $KODI_CFLAGS"
-  export CXXFLAGS="$CXXFLAGS $KODI_CXXFLAGS"
+  export CFLAGS="$CFLAGS $KODI_CFLAGS -g"
+  export CXXFLAGS="$CXXFLAGS $KODI_CXXFLAGS -g"
   export LIBS="$LIBS -lz"
 }
 
 configure_target() {
 # dont use some optimizations because of build problems
   LDFLAGS=`echo $LDFLAGS | sed -e "s|-Wl,--as-needed||"`
-# dont build parallel
-  MAKEFLAGS=-j1
 
 # strip compiler optimization
   strip_lto
@@ -199,7 +197,7 @@ fi
 
 if [ $PROJECT = "RPi" -o $PROJECT = "RPi2" ]; then
   export PYTHON_EXEC="$SYSROOT_PREFIX/usr/bin/python2.7"
-  cmake -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
+  cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
         -DENABLE_PYTHON=ON \
         -DEXTERNAL_PYTHON_HOME="$SYSROOT_PREFIX/usr" \
         -DPYTHON_EXEC="$PYTHON_EXEC" \
@@ -209,7 +207,7 @@ if [ $PROJECT = "RPi" -o $PROJECT = "RPi2" ]; then
         -DCMAKE_LIBRARY_PATH="$SYSROOT_PREFIX/usr/lib" \
         -DCMAKE_INCLUDE_PATH="$SYSROOT_PREFIX/usr/include;$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux;$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads;$SYSROOT_PREFIX/usr/include/python2.7;$SYSROOT_PREFIX/usr/lib/dbus-1.0/include" \
         -DCOMPRESS_TEXTURES=OFF \
-        -DENABLE_DUMP_SYMBOLS=OFF \
+        -DENABLE_DUMP_SYMBOLS=ON \
         -DENABLE_AUTOUPDATE=ON \
         -DTARGET_PLATFORM=RPI \
         -DRPI_PROJECT=$PROJECT \
@@ -228,10 +226,18 @@ make_target() {
 # setup default skin inside the sources
   sed -i -e "s|skin.confluence|$SKIN_DIR|g" $ROOT/$PKG_BUILD/xbmc/settings/Settings.h
 
-  make $PKG_MAKE_OPTS_TARGET
+  ninja -j$CONCURRENCY_MAKE_LEVEL
+
+# generate breakpad symbols
+  ninja plex/CMakeFiles/PlexHomeTheater_symbols
+
+# Strip the executable now that we have our breakpad symbols
+  $STRIP plex/plexhometheater
 }
 
-post_makeinstall_target() {
+makeinstall_target() {
+  DESTDIR=$INSTALL ninja install
+
   rm -rf $INSTALL/usr/lib/plexht/bin/lib
   rm -rf $INSTALL/usr/lib/plexht/bin/include
   rm -rf $INSTALL/usr/lib/plexht/bin/*.so
