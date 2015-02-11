@@ -32,6 +32,19 @@ PKG_LONGDESC=""
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+if [ "$MEDIACENTER" = "rasplex" ]; then
+# reset depends
+  PKG_DEPENDS_TARGET="toolchain $MEDIACENTER"
+
+# some python stuff needed for various addons
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET Imaging"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET simplejson"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pycrypto"
+
+# other packages
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET RasPlex-settings"
+fi
+
 for i in $SKINS; do
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $MEDIACENTER-theme-$i"
 done

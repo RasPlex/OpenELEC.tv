@@ -1,0 +1,12 @@
+[Unit]
+Description=PlexHT sources Setup
+Before=plexht.service
+
+[Service]
+Type=oneshot
+Environment=HOME=/storage
+ExecStart=/usr/lib/plexht/plexht-sources
+RemainAfterExit=yes
+
+[Install]
+WantedBy=plexht.service

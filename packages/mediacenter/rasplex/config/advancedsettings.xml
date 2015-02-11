@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<advancedsettings>
+<showfirstrun>77</showfirstrun>
+  <cputempcommand>cputemp</cputempcommand>
+  <gputempcommand>gputemp</gputempcommand>
+ <network>
+<cachemembuffersize>30242880</cachemembuffersize>
+</network>
+<fanartheight>560</fanartheight>
+<thumbsize>256</thumbsize>
+ <video>
+ <defaultplayer>omxplayer</defaultplayer>
+ <defaultdvdplayer>omxplayer</defaultdvdplayer>
+ </video>
+ <audio>
+ <defaultplayer>paplayer</defaultplayer>
+ <streamsilence>false</streamsilence>
+ </audio>
+ <gui>
+ <algorithmdirtyregions>3</algorithmdirtyregions>
+  <nofliptimeout>0</nofliptimeout>
+ </gui>
+  <bginfoloadermaxthreads>2</bginfoloadermaxthreads>
+  <destroywindowcontrols>false</destroywindowcontrols>
+  <useddsfanart>false</useddsfanart>
+  <remotedelay>10</remotedelay>
+</advancedsettings>
+
+<!--https://github.com/OpenELEC/OpenELEC.tv/blob/master/projects/RPi/xbmc/advancedsettings.xml-->
