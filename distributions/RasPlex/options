@@ -114,7 +114,7 @@
   KODI_NFS_SUPPORT="no"
 
 # build with Samba Client support (mounting SAMBA shares with KODI) (yes / no)
-  KODI_SAMBA_SUPPORT="no"
+  KODI_SAMBA_SUPPORT="yes"
 
 # build with NFS support (mounting nfs shares via the OS) (yes / no)
   NFS_SUPPORT="yes"
