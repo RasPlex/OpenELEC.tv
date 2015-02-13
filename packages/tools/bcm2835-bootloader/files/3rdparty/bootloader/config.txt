@@ -108,6 +108,8 @@ hdmi_force_hotplug=1
 hdmi_drive=2
 gpu_mem_256=64
 gpu_mem_512=200
+gpu_mem_1024=256
+dtoverlay=lirc-rpi
 
 
 ################################################################################
@@ -115,5 +117,4 @@ gpu_mem_512=200
 # all values below this line were inserted from config.txt.bk (your old config)
 # and can be merged with the above values
 ################################################################################
-
 
