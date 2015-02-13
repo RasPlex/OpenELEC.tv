@@ -2,11 +2,11 @@
 Description=OpenSSH server daemon
 ConditionKernelCommandLine=|ssh
 ConditionPathExists=|/storage/.cache/services/sshd.conf
-After=network.target
+After=network.target sshd-defaults.service
+Requires=sshd-defaults.service
 
 [Service]
 EnvironmentFile=-/storage/.cache/services/sshd.conf
-ExecStartPre=/usr/bin/ssh-keygen -A
 ExecStart=/usr/sbin/sshd -D $SSH_ARGS
 ExecReload=/bin/kill -HUP $MAINPID
 TimeoutStopSec=1s

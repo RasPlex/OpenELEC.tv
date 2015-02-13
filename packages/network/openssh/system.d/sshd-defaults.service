@@ -1,0 +1,12 @@
+[Unit]
+Description=SSHD defaults
+After=local-fs.target
+
+ConditionPathExists=!/storage/.cache/services/sshd.conf
+ConditionPathExists=!/storage/.cache/services/sshd.disabled
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/ssh-keygen -A
+ExecStart=/bin/sh -c 'cp /usr/share/services/sshd.conf /storage/.cache/services/'
+RemainAfterExit=yes
