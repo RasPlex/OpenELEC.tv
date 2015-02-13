@@ -18,7 +18,7 @@
 
 PKG_NAME="ffmpeg"
 PKG_VERSION="2.4.6"
-if [ "$MEDIACENTER" = "rasplex" ]; then
+if [ "$MEDIACENTER" = "plexht" ]; then
   PKG_VERSION="0.10.7"
 fi
 PKG_REV="1"

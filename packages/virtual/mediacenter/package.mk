@@ -32,7 +32,7 @@ PKG_LONGDESC=""
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-if [ "$MEDIACENTER" = "rasplex" ]; then
+if [ "$MEDIACENTER" = "plexht" ]; then
 # reset depends
   PKG_DEPENDS_TARGET="toolchain $MEDIACENTER"
 
