@@ -40,7 +40,7 @@ PKG_AUTORECONF="no"
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET dbus"
 
 # needed for hosttools (Texturepacker)
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET lzo:host SDL:host SDL_image:host"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET lzo:host SDL:host SDL_image:host rasplex:host"
 
 if [ "$DISPLAYSERVER" = "x11" ]; then
 # for libX11 support
@@ -165,6 +165,18 @@ export ac_python_version="$PYTHON_VERSION"
 unpack() {
   mkdir -p $BUILD/$PKG_NAME-$PKG_VERSION
   tar xzf $SOURCES/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz -C $BUILD/$PKG_NAME-$PKG_VERSION --strip-components=1
+}
+
+configure_host() {
+  cmake -G Ninja ../tools/TexturePacker
+}
+
+make_host() {
+  ninja
+}
+
+makeinstall_host() {
+  cp -PR TexturePacker $ROOT/$TOOLCHAIN/bin
 }
 
 pre_configure_target() {
