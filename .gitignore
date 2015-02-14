@@ -28,3 +28,7 @@ mkpkg-temp
 
 # crap
 .DS_Store
+
+# Rasplex things
+distributions/RasPlex/version
+tmp
