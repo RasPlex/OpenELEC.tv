@@ -121,6 +121,9 @@
       nosplash)
         SPLASH=no
         ;;
+      growstorage)
+        GROW_STORAGE=yes
+        ;;
       noram)
         SYSTEM_TORAM=no
         ;;
@@ -452,6 +455,54 @@
     mount_part "$boot" "/flash" "ro,noatime"
   }
 
+  count_down() {
+    msg=$1
+    clock=$2
+
+    echo $1
+    while [ $clock -gt 0 ]; do
+      echo $clock
+      /bin/busybox usleep 1000000
+      clock=`/bin/busybox expr $clock - 1`
+    done
+  }
+
+ grow_storage() {
+
+      if [ "$GROW_STORAGE" = "yes" ]; then 
+          DEVICE=${disk%p*} # chop off p2 or partition info
+          STORAGE_DEV=$disk
+
+
+
+          if [ ! -e /storage/.grewroot ];then
+
+              count_down "This will grow the system to available space. If you do not want this, unplug now to abort and remove the 'grow_storage' kernel option" 5
+              SYSROOT_LIBS=/sysroot/usr/lib:/sysroot/lib
+              umount /storage
+              mount_part "/flash/$IMAGE_SYSTEM" "/sysroot" "ro,loop"
+              PART_START=`LD_LIBRARY_PATH=$SYSROOT_LIBS /sysroot/usr/sbin/parted $DEVICE -ms unit s p | grep "^2" | awk '{split($0,a,":"); print a[2]}'`
+
+              echo "Partition start detected at $PART_START" 
+              count_down "Sleeping to give the system some time to reboot if its going to. Rebooting during the operation will corrupt the system." 10
+
+              echo "Starting resize..."
+              LD_LIBRARY_PATH=$SYSROOT_LIBS /sysroot/usr/sbin/parted -s $DEVICE rm 2
+              LD_LIBRARY_PATH=$SYSROOT_LIBS /sysroot/usr/sbin/parted -s $DEVICE unit s mkpart primary ext2 -- $PART_START -1
+              echo "Partition resized!"
+
+              progress "Growing storage filesystem to new size..."
+              LD_LIBRARY_PATH=$SYSROOT_LIBS /sysroot/sbin/resize2fs $STORAGE_DEV
+              mount_part "$disk" "/storage" "rw,noatime"
+              echo '1' >  /storage/.grewroot
+              umount /sysroot
+              sync
+              progress "Storage filesystem expansion successful!"
+          fi
+      fi
+  }
+
+
   mount_storage() {
     progress "Mounting storage"
 
@@ -475,6 +526,7 @@
         fi
       fi
       mount_part "$disk" "/storage" "rw,noatime"
+      grow_storage
     fi
   }
 
