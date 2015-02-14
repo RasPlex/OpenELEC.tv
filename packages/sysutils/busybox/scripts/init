@@ -58,11 +58,6 @@
   # hide kernel log messages on console
   echo '1 4 1 7' > /proc/sys/kernel/printk
 
-  # run platform_init script if exists
-  if [ -f "./platform_init" ]; then
-    ./platform_init
-  fi
-
   # clear screen and hide cursor
   clear
   if [ -f /sys/devices/virtual/graphics/fbcon/cursor_blink ] ; then
@@ -635,20 +630,25 @@
 
   BOOT_STEP=final
 
-  # log if booting from usb / removable storage
+  # no suspend when booted from nonpersistent storage
   STORAGE=$(cat /proc/mounts | grep " /sysroot/storage " | awk '{print $1}' | awk -F '/' '{print $3}')
-  FLASH=$(cat /proc/mounts | grep " /sysroot/flash " | awk '{print $1}' | awk -F '/' '{print $3}')
-  for i in $STORAGE $FLASH ; do
-    if [ -n "$i" ] ; then
-      removable="/sys/class/block/*/$i/../removable"
-      if [ -e $removable ] ; then
-        if [ "$(cat $removable 2>/dev/null)" = "1" ] ; then
-          echo "### BIG FAT WARNING" > /dev/kmsg
-          echo "### $i is removable. suspend/resume may not work" > /dev/kmsg
-        fi
+  if [ -n "$STORAGE" ] ; then
+    removable="/sys/class/block/*/$STORAGE/../removable"
+    if [ -e $removable ] ; then
+      if [ "$(cat $removable 2>/dev/null)" = "1" ] ; then
+        SUSPEND_DISABLED=yes
       fi
     fi
-  done
+  fi
+  FLASH=$(cat /proc/mounts | grep " /sysroot/flash " | awk '{print $1}' | awk -F '/' '{print $3}')
+  if [ -n "$FLASH" ] ; then
+    removable="/sys/class/block/*/$FLASH/../removable"
+    if [ -e $removable ] ; then
+      if [ "$(cat $removable 2>/dev/null)" = "1" ] ; then
+        SUSPEND_DISABLED=yes
+      fi
+    fi
+  fi
   # move some special filesystems
   /bin/busybox mount --move /dev /sysroot/dev
   /bin/busybox mount --move /proc /sysroot/proc
@@ -662,9 +662,17 @@
   if [ "$STORAGE_NETBOOT" = "yes" ] ; then
     echo "" > /sysroot/dev/.storage_netboot
   fi
+  # no suspend when booted from nonpersistent storage
+  if [ "$SUSPEND_DISABLED" = "yes" ] ; then
+    echo "" > /sysroot/dev/.suspend_disabled
+  fi
 
   if [ -f /sysroot/storage/.please_resize_me ] ; then
     INIT_UNIT="--unit=fs-resize.target"
+  fi
+
+  if [ -f /sysroot/storage/.cache/reset_oe -o -f /sysroot/storage/.cache/reset_xbmc ] ; then
+    INIT_UNIT="--unit=factory-reset.target"
   fi
 
   BACKUP_FILE=`ls -1 /sysroot/storage/.restore/??????????????.tar 2>/dev/null | head -n 1`
@@ -672,9 +680,6 @@
     INIT_UNIT="--unit=backup-restore.target"
   fi
 
-  if [ -f /sysroot/storage/.cache/reset_oe -o -f /sysroot/storage/.cache/reset_xbmc ] ; then
-    INIT_UNIT="--unit=factory-reset.target"
-  fi
   # switch to new sysroot and start real init
   exec /bin/busybox switch_root /sysroot /usr/lib/systemd/systemd $INIT_ARGS $INIT_UNIT
 
