@@ -16,18 +16,14 @@ namespace :build do
 
   end
 
-  desc "Generate an image file from current or latest build output"
-  task :image, [:info, :plex] do | t, args |
+  desc "Force a rebuild of the kernel, initramfs, and firmware"
+  task :kernel do
 
-    cmd = "DISTRO=#{$config['distro']} PROJECT=#{$config['project']} ARCH=#{$config['arch']} make image -j `nproc`"
-    sh cmd
-  end
-
-  desc "(re)build any new, incomplete, or modified OpenELEC packages."
-  task :all => [:info, :plex] do
-
-    cmd = "DISTRO=#{$config['distro']} PROJECT=#{$config['project']} ARCH=#{$config['arch']} make all -j `nproc`"
-    sh cmd
+    kernel_pkgs = ["linux", "linux-drivers", "initramfs", "busybox", "bcm2835-bootloader", "bcm2835-driver"]
+    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['oeversion']}"
+    kernel_pkgs.each do |pkg|
+      sh "rm -rf #{build_dir}/.stamps/#{pkg}"
+    end
   end
 
   desc "Force a (re)build full PHT package"
@@ -60,14 +56,18 @@ eos
     File.open(build_config_path, 'a') { |file| file.write(version_str) }
   end
 
-  desc "Force a rebuild of the kernel, initramfs, and firmware"
-  task :kernel do
+  desc "Generate an image file from current or latest build output"
+  task :image, [:info, :plex] do | t, args |
 
-    kernel_pkgs = ["linux", "linux-drivers", "initramfs", "busybox", "bcm2835-bootloader", "bcm2835-driver"]
-    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['oeversion']}"
-    kernel_pkgs.each do |pkg|
-      sh "rm -rf #{build_dir}/.stamps/#{pkg}"
-    end
+    cmd = "DISTRO=#{$config['distro']} PROJECT=#{$config['project']} ARCH=#{$config['arch']} make image -j `nproc`"
+    sh cmd
+  end
+
+  desc "(re)build any new, incomplete, or modified OpenELEC packages."
+  task :all => [:info, :plex] do
+
+    cmd = "DISTRO=#{$config['distro']} PROJECT=#{$config['project']} ARCH=#{$config['arch']} make all -j `nproc`"
+    sh cmd
   end
 
 end
