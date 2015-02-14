@@ -108,22 +108,6 @@
 #
 ################################################################################
 
-# SDRAM size based GPU memory split
-  gpu_mem_256=128
-  gpu_mem_512=200
-  gpu_mem_1024=256
-
-# set to 'force_turbo=1' to disable dynamic overclocking (you can lose your warranty!)
-  force_turbo=0
-
-# Force HDMI even if unplugged or powered off
-  hdmi_force_hotplug=1
-
-# Doesn't sent initial active source message.
-# Avoids bringing CEC (enabled TV) out of standby and channel switch when
-# rebooting.
-  hdmi_ignore_cec_init=1
-
 # Required overlay for LIRC to function
   dtoverlay=lirc-rpi
 
