@@ -17,40 +17,23 @@ namespace :build do
   end
 
   desc "Generate an image file from current or latest build output"
-  task :image do | t, args |
+  task :image, [:info, :plex] do | t, args |
 
-    unless File.directory? 'tmp'
-      Dir.mkdir('tmp')
-    end
-
-    freedev = `sudo losetup -f`.strip
-
-    tarballs = Dir.glob('target/*.tar')
-    latest = tarballs.sort_by {|filename| File.mtime(filename) }[-1]
-    basename = File.basename(latest).gsub('.tar','')
-    imgfile = "rasplex-#{$config['version']}.img"
-
-    sh "tar -xpf #{latest} -C tmp"
-    sh "dd if=/dev/zero of=tmp/#{imgfile} bs=1M count=910"
-    Dir.chdir("tmp/#{basename}") do
-      cmd = "sudo ./create_sdcard #{freedev} ../#{imgfile}"
-      sh cmd
-    end
-
-
+    cmd = "DISTRO=#{$config['distro']} PROJECT=#{$config['project']} ARCH=#{$config['arch']} make image -j `nproc`"
+    sh cmd
   end
 
   desc "(re)build any new, incomplete, or modified OpenELEC packages."
-  task :system => [:info] do
+  task :all => [:info, :plex] do
 
     cmd = "DISTRO=#{$config['distro']} PROJECT=#{$config['project']} ARCH=#{$config['arch']} make all -j `nproc`"
     sh cmd
   end
 
-  desc "Force a (re)build full PHT package at [version], wip by default"
+  desc "Force a (re)build full PHT package"
   task :plex => [:info] do | t, args |
 
-    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['oeversion']}-release"
+    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['oeversion']}"
     sh "rm -rf #{build_dir}/.stamps/plexht"
     sh "mkdir -p #{build_dir}"
 
@@ -80,15 +63,13 @@ eos
   desc "Force a rebuild of the kernel, initramfs, and firmware"
   task :kernel do
 
-    kernel_pkgs = ["linux","linux-drivers","linux-initramfs","busybox","busybox-initramfs", "bcm2835-bootloader", "bcm2835-driver"]
-    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['oeversion']}-release"
+    kernel_pkgs = ["linux", "linux-drivers", "initramfs", "busybox", "bcm2835-bootloader", "bcm2835-driver"]
+    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['oeversion']}"
     kernel_pkgs.each do |pkg|
       sh "rm -rf #{build_dir}/.stamps/#{pkg}"
     end
   end
 
-  desc "(re)build change or incomplete packages, kernel, bootloader, and, with PHT [version], wip by default"
-  task :all, [:version] => [:plex, :system, :image]
 end
 
 desc "Print a detailed help with usage examples"
@@ -97,19 +78,24 @@ task :help do
   help = <<-eos
 This Rakefile replaces buildman. It requires ruby and the 'rake' gem be installed.
 
+Environment variables accepted:
+
+  project=[RPi,RPi2]
+  version=[RP-0.5.X] # git tag, if not specified defaults to 'wip'
+
 Common operations:
 
-** Full rebuild / initial build **
+  Build the system
 
-  This will build all missing openelec packages (all packages on first build), and anything modified. It will force a rebuild of PHT.
+    rake build:image
 
-  The output of a successful buil will be a .img file, suitable for flashing to an SD card.
+  or, optionally pass the project to build
 
-    rake all
+    rake build:image project=RPi2
 
-  or, optionally pass a git tagged version of PHT
+  Rebuild the kernel / initramfs:
 
-    rake all[RP-0.4.0]
+    rake build:kernel project=RPi2
 
   eos
   puts help
