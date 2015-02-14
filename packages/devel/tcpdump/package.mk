@@ -45,7 +45,5 @@ configure_target() {
 	autoconf
 	ac_cv_linux_vers=2 $ROOT/$PKG_BUILD/configure --host=$TARGET_NAME \
             --target=$TARGET_NAME \
-            --with-pcap=linux \
-            --prefix=$SYSROOT_PREFIX/usr \
-
+            --with-pcap=linux
 }
