@@ -20,9 +20,7 @@
   </audio>
 
   <network>
-    <cachemembuffersize>30242880</cachemembuffersize>
-    <readbufferfactor>4</readbufferfactor>
-    <buffermode>1</buffermode>
+    <cachemembuffersize>52428800</cachemembuffersize>
     <curlclienttimeout>30</curlclienttimeout>
     <readbufferfactor>4.0</readbufferfactor>
   </network>

@@ -7,6 +7,7 @@
   <imageres>540</imageres>
   <bginfoloadermaxthreads>2</bginfoloadermaxthreads>
   <useddsfanart>false</useddsfanart>
+  <smartcacheupperlimit>26214400</smartcacheupperlimit>
 
   <video>
     <defaultplayer>omxplayer</defaultplayer>
@@ -20,9 +21,7 @@
   </audio>
 
   <network>
-    <cachemembuffersize>10971520</cachemembuffersize>
-    <readbufferfactor>4</readbufferfactor>
-    <buffermode>1</buffermode>
+    <cachemembuffersize>30242880</cachemembuffersize>
     <curlclienttimeout>30</curlclienttimeout>
     <readbufferfactor>4.0</readbufferfactor>
   </network>
