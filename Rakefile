@@ -57,7 +57,7 @@ eos
   end
 
   desc "Generate an image file from current or latest build output"
-  task :image, [:info, :plex] do | t, args |
+  task :image => [:info, :plex] do | t, args |
 
     cmd = "DISTRO=#{$config['distro']} PROJECT=#{$config['project']} ARCH=#{$config['arch']} make image -j `nproc`"
     sh cmd
