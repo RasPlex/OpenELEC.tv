@@ -20,18 +20,17 @@
   </audio>
 
   <network>
-    <cachemembuffersize>20971520</cachemembuffersize>
+    <cachemembuffersize>30242880</cachemembuffersize>
+    <readbufferfactor>4</readbufferfactor>
+    <buffermode>1</buffermode>
+    <curlclienttimeout>30</curlclienttimeout>
+    <readbufferfactor>4.0</readbufferfactor>
   </network>
 
   <samba>
     <clienttimeout>30</clienttimeout>
   </samba>
 
-  <network>
-    <curlclienttimeout>30</curlclienttimeout>
-    <readbufferfactor>4.0</readbufferfactor>
-  </network>
-  
   <gui>
     <algorithmdirtyregions>3</algorithmdirtyregions>
     <nofliptimeout>0</nofliptimeout>
