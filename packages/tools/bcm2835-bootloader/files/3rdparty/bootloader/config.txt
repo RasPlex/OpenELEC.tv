@@ -25,11 +25,12 @@
 ################################################################################
 
 # default GPU memory split (do not change if you do not know what you are doing)
-  gpu_mem=128
+
+  gpu_mem=200
 
 # SDRAM size based GPU memory split, uncomment and setup to override 'gpu_mem'
   gpu_mem_256=112
-  gpu_mem_512=160
+  gpu_mem_512=200
   gpu_mem_1024=256
 
 ################################################################################
@@ -84,13 +85,16 @@
 # various settings see also: http://elinux.org/RPi_config.txt
 ################################################################################
 
+# Uncomment for DVI monitor
+# hdmi_drive=1
+
 # Force HDMI even if unplugged or powered off
 # hdmi_force_hotplug=1
 
 # Doesn't sent initial active source message.
 # Avoids bringing CEC (enabled TV) out of standby and channel switch when
 # rebooting.
-  hdmi_ignore_cec_init=1
+# hdmi_ignore_cec_init=1
 
 ################################################################################
 # License keys to enable GPU hardware decoding for various codecs
