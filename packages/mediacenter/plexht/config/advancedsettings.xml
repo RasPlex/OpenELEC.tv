@@ -5,6 +5,8 @@
   <gputempcommand>gputemp</gputempcommand>
  <network>
 <cachemembuffersize>30242880</cachemembuffersize>
+<readbufferfactor>4</readbufferfactor>
+<buffermode>1</buffermode>
 </network>
 <fanartheight>560</fanartheight>
 <thumbsize>256</thumbsize>
