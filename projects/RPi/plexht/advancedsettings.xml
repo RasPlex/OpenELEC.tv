@@ -1,38 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <advancedsettings>
-  <showexitbutton>false</showexitbutton>
-
-  <destroywindowcontrols>false</destroywindowcontrols>
-  <fanartres>720</fanartres>
-  <imageres>540</imageres>
+<showfirstrun>77</showfirstrun>
+ <cputempcommand>/opt/vc/bin/vcgencmd measure_temp | sed -e 's/temp=\([0-9]*\).*/\1 C/'</cputempcommand>
+ <gputempcommand>/opt/vc/bin/vcgencmd measure_temp | sed -e 's/temp=\([0-9]*\).*/\1 C/'</gputempcommand>
+ <network>
+<cachemembuffersize>30242880</cachemembuffersize>
+</network>
+<fanartheight>560</fanartheight>
+<thumbsize>256</thumbsize>
+ <video>
+ <defaultplayer>omxplayer</defaultplayer>
+ <defaultdvdplayer>omxplayer</defaultdvdplayer>
+ </video>
+ <audio>
+ <defaultplayer>paplayer</defaultplayer>
+ <streamsilence>false</streamsilence>
+ </audio>
+ <gui>
+ <algorithmdirtyregions>3</algorithmdirtyregions>
+  <nofliptimeout>0</nofliptimeout>
+ </gui>
   <bginfoloadermaxthreads>2</bginfoloadermaxthreads>
+  <destroywindowcontrols>false</destroywindowcontrols>
   <useddsfanart>false</useddsfanart>
-  <smartcacheupperlimit>26214400</smartcacheupperlimit>
-
-  <video>
-    <defaultplayer>omxplayer</defaultplayer>
-    <defaultdvdplayer>omxplayer</defaultdvdplayer>
-    <busydialogdelayms>750</busydialogdelayms>
-  </video>
-
-  <audio>
-    <defaultplayer>omxplayer</defaultplayer>
-    <streamsilence>false</streamsilence>
-  </audio>
-
-  <network>
-    <cachemembuffersize>30242880</cachemembuffersize>
-    <curlclienttimeout>30</curlclienttimeout>
-    <readbufferfactor>4.0</readbufferfactor>
-  </network>
-
-  <samba>
-    <clienttimeout>30</clienttimeout>
-  </samba>
-
-  <gui>
-    <algorithmdirtyregions>3</algorithmdirtyregions>
-    <nofliptimeout>0</nofliptimeout>
-  </gui>
-
+  <remotedelay>10</remotedelay>
 </advancedsettings>
+
+<!--https://github.com/OpenELEC/OpenELEC.tv/blob/master/projects/RPi/xbmc/advancedsettings.xml-->
+
