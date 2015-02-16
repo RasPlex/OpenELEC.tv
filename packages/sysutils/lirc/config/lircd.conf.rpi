@@ -517,3 +517,49 @@ begin remote
       end codes
 
 end remote
+
+begin remote
+  name  RemotePi1
+  bits           8
+  flags RC6|CONST_LENGTH
+  eps            30
+  aeps          100
+  header       2667   889
+  one           444   444
+  zero          444   444
+  pre_data_bits 13
+  pre_data     0xEFB
+  gap          108000
+  toggle_bit_mask 0x10000
+  rc6_mask    0x10000
+  min_repeat 2
+  suppress_repeat 6
+      begin codes
+          KEY_OK                   0xA3
+          KEY_LEFT                 0xA5
+          KEY_RIGHT                0xA4
+          KEY_DOWN                 0xA6
+          KEY_UP                   0xA7
+          KEY_EXIT                 0x7C
+          KEY_PAUSE                0xD3
+          KEY_STOP                 0xCE
+          KEY_SUBTITLE             0xB4
+          KEY_AUDIO                0xB1
+          KEY_PREVIOUS             0xDE
+          KEY_NEXT                 0xDF
+          KEY_HOME                 0x2E
+          KEY_INFO                 0xF0
+          KEY_NUMERIC_0            0xFF
+          KEY_NUMERIC_1            0xFE
+          KEY_NUMERIC_2            0xFD
+          KEY_NUMERIC_3            0xFC
+          KEY_NUMERIC_4            0xFB
+          KEY_NUMERIC_5            0xFA
+          KEY_NUMERIC_6            0xF9
+          KEY_NUMERIC_7            0xF8
+          KEY_NUMERIC_8            0xF7
+          KEY_NUMERIC_9            0xF6
+          KEY_MUTE                 0xF2
+          KEY_EPG                  0x7D
+      end codes
+end remote

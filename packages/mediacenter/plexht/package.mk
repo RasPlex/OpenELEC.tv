@@ -43,6 +43,10 @@ export SRC_DIR="$ROOT/$BUILD/$PKG_NAME-$RASPLEX_REF"
 # needed for hosttools (Texturepacker)
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET lzo:host SDL:host SDL_image:host plexht:host"
 
+if [ $PROJECT = "RPi" -o $PROJECT = "RPi2" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET remotepi"
+fi
+
 if [ "$DISPLAYSERVER" = "x11" ]; then
 # for libX11 support
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libX11 libXext libdrm"
