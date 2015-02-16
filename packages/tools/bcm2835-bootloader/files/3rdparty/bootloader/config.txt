@@ -26,11 +26,11 @@
 
 # default GPU memory split (do not change if you do not know what you are doing)
 
-  gpu_mem=160
+  gpu_mem=200
 
 # SDRAM size based GPU memory split, uncomment and setup to override 'gpu_mem'
   gpu_mem_256=112
-  gpu_mem_512=160
+  gpu_mem_512=200
   gpu_mem_1024=256
 
 ################################################################################
