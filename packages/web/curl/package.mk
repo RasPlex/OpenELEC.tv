@@ -35,7 +35,7 @@
 # curl is one of the central libs in kodi
 
 PKG_NAME="curl"
-PKG_VERSION="7.37.1"
+PKG_VERSION="7.31.0"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MIT"
