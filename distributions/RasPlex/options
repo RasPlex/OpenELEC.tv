@@ -236,5 +236,3 @@
   ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
 
   OFFICIAL="yes"
-  . distributions/RasPlex/version
-

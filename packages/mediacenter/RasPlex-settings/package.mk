@@ -41,7 +41,11 @@ fi
 unpack() {
   rm -rf $BUILD/$PKG_NAME-$PKG_VERSION
   mkdir -p $BUILD/$PKG_NAME-$PKG_VERSION
-  tar xzf $SOURCES/$PKG_NAME/service.openelec.settings-$PKG_VERSION.tar.gz -C $BUILD/$PKG_NAME-$PKG_VERSION --strip-components=1
+  if [ -f $SOURCES/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz ]; then
+    tar xzf $SOURCES/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz -C $BUILD/$PKG_NAME-$PKG_VERSION --strip-components=1
+  else
+    tar xzf $SOURCES/$PKG_NAME/service.openelec.settings-$PKG_VERSION.tar.gz -C $BUILD/$PKG_NAME-$PKG_VERSION --strip-components=1
+  fi
 }
 
 make_target() {

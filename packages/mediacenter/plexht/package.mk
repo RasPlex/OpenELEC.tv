@@ -21,7 +21,7 @@ PKG_VERSION="$RASPLEX_VERSION"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="http://www.plexht.com"
+PKG_SITE="http://www.rasplex.com"
 PKG_URL="https://github.com/RasPlex/RasPlex/archive/master.zip"
 PKG_DEPENDS_TARGET="toolchain ninja:host boost Python zlib bzip2 systemd pciutils lzo pcre swig:host libass enca curl rtmpdump fontconfig fribidi tinyxml libjpeg-turbo libpng tiff freetype jasper libogg libcdio libmodplug libmpeg2 taglib libxml2 libxslt yajl sqlite libvorbis ffmpeg libshairplay libsamplerate flac SDL_mixer lame breakpad tcpdump strace"
 PKG_DEPENDS_HOST="toolchain"
@@ -34,6 +34,10 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 export SRC_DIR="$ROOT/$BUILD/$PKG_NAME-$RASPLEX_REF"
+if [ -n "$JENKINS_URL" ]; then
+  export SRC_DIR=..
+fi
+
 # configure GPU drivers and dependencies:
   get_graphicdrivers
 
@@ -168,7 +172,14 @@ export PYTHON_SITE_PKG="$SYSROOT_PREFIX/usr/lib/python$PYTHON_VERSION/site-packa
 export ac_python_version="$PYTHON_VERSION"
 
 unpack() {
-	echo "Skipping unpack"
+  if [ -n "$JENKINS_URL" ]; then
+    rm -rf $BUILD/$PKG_NAME-$PKG_VERSION
+    mkdir -p $BUILD/$PKG_NAME-$PKG_VERSION
+    tar xzf $SOURCES/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz -C $BUILD/$PKG_NAME-$PKG_VERSION --strip-components=1
+    if [ -n "$PKG_GIT_REV" ]; then
+      echo $PKG_GIT_REV > $BUILD/$PKG_NAME-$PKG_VERSION/GitRevision.txt
+    fi
+  fi
 }
 
 configure_host() {
@@ -211,9 +222,11 @@ else
     CMAKE_BUILD_TYPE="Release"
 fi
 
-[ -d $SRC_DIR/build ] && rm -rf $SRC_DIR/build
-mkdir -p $SRC_DIR/build
-cd $SRC_DIR/build
+if [ -z "$JENKINS_URL" ]; then
+  [ -d $SRC_DIR/build ] && rm -rf $SRC_DIR/build
+  mkdir -p $SRC_DIR/build
+  cd $SRC_DIR/build
+fi
 
 if [ $PROJECT = "RPi" -o $PROJECT = "RPi2" ]; then
   export PYTHON_EXEC="$SYSROOT_PREFIX/usr/bin/python2.7"
@@ -231,6 +244,7 @@ if [ $PROJECT = "RPi" -o $PROJECT = "RPi2" ]; then
         -DENABLE_AUTOUPDATE=ON \
         -DTARGET_PLATFORM=RPI \
         -DRPI_PROJECT=$PROJECT \
+        -DTARGET_RPI=1 \
         -DCMAKE_INSTALL_PREFIX=/usr/lib/plexht \
         -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
         $SRC_DIR
