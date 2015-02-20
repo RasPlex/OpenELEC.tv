@@ -19,39 +19,27 @@
 
 . /etc/profile
 
-if [ ! -f /storage/.cache/services/remotepi.conf ]; then
+if [ ! -f /storage/.cache/services/remotepi-board.conf ]; then
 	exit
 fi
 
-REMOTEPI_VERSION=2015
-. /storage/.cache/services/remotepi.conf
-
-if [ ! -f /tmp/.remotepi-shutdown -a "$REMOTEPI_VERSION" = "2015" ]; then
-	GPIOpin=15
-	echo "$GPIOpin" > /sys/class/gpio/export
-
-	# execute shutdown sequence on pin
-	echo "out" > /sys/class/gpio/gpio$GPIOpin/direction
-	echo "1" > /sys/class/gpio/gpio$GPIOpin/value
-	usleep 125000
-	echo "0" > /sys/class/gpio/gpio$GPIOpin/value
-	usleep 200000
-	echo "1" > /sys/class/gpio/gpio$GPIOpin/value
-	usleep 400000
-	echo "0" > /sys/class/gpio/gpio$GPIOpin/value
-	sleep 1
-fi
+BOARD_VERSION=2015
+. /storage/.cache/services/remotepi-board.conf
 
 # this is the GPIO pin receiving the shutdown signal
 GPIOpin1=14
-if [ "$REMOTEPI_VERSION" = "2013" ]; then
+if [ "$BOARD_VERSION" = "2013" ]; then
   GPIOpin1=22
 fi
 
-# enable gpio export to userland
 echo "$GPIOpin1" > /sys/class/gpio/export
-
-# write high to gpio at least 3 seconds
-echo "out" > /sys/class/gpio/gpio$GPIOpin1/direction
-echo "1" > /sys/class/gpio/gpio$GPIOpin1/value
-sleep 3
+echo "in" > /sys/class/gpio/gpio$GPIOpin1/direction
+while true; do
+  sleep 1
+  power=$(cat /sys/class/gpio/gpio$GPIOpin1/value)
+  if [ $power != 0 ]; then
+	touch /tmp/.remotepi-board-shutdown
+	/usr/bin/xbmc-send --host=127.0.0.1 --port=9778 --action="Xbmc.ShutDown"
+	break
+  fi
+done

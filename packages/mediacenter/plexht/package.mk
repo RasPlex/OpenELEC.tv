@@ -48,7 +48,7 @@ fi
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET lzo:host SDL:host SDL_image:host plexht:host"
 
 if [ $PROJECT = "RPi" -o $PROJECT = "RPi2" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET remotepi"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET remotepi-board"
 fi
 
 if [ "$DISPLAYSERVER" = "x11" ]; then

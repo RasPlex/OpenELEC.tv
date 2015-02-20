@@ -1,13 +1,13 @@
 [Unit]
-Description=RemotePi Switch
-ConditionPathExists=/storage/.cache/services/remotepi.conf
+Description=RemotePi Board service
+ConditionPathExists=/storage/.cache/services/remotepi-board.conf
 Before=plexht.service
 After=graphical.target
 
 [Service]
 Type=simple
 Environment=HOME=/storage
-ExecStart=/usr/bin/remotepi-switch
+ExecStart=/usr/bin/remotepi-board
 
 [Install]
 WantedBy=plexht.service

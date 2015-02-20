@@ -1,6 +1,6 @@
 [Unit]
-Description=RemotePi Shutdown
-ConditionPathExists=/storage/.cache/services/remotepi.conf
+Description=RemotePi Board shutdown service
+ConditionPathExists=/storage/.cache/services/remotepi-board.conf
 After=plexht.service
 Before=systemd-poweroff.service
 DefaultDependencies=no
@@ -8,7 +8,7 @@ DefaultDependencies=no
 [Service]
 Type=oneshot
 Environment=HOME=/storage
-ExecStart=/usr/bin/remotepi-shutdown
+ExecStart=/usr/bin/remotepi-board-shutdown
 
 [Install]
 WantedBy=poweroff.target
