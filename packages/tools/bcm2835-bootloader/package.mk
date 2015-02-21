@@ -44,5 +44,9 @@ makeinstall_target() {
     cp -PRv start_x.elf $INSTALL/usr/share/bootloader/start.elf
 
     cp -PRv $PKG_DIR/scripts/update.sh $INSTALL/usr/share/bootloader
-    cp -PRv $PKG_DIR/files/3rdparty/bootloader/config.txt $INSTALL/usr/share/bootloader
+    if [ -f $PROJECT_DIR/$PROJECT/bootloader/config.txt ]; then
+      cp -PRv $PROJECT_DIR/$PROJECT/bootloader/config.txt $INSTALL/usr/share/bootloader
+    else
+      cp -PRv $PKG_DIR/files/3rdparty/bootloader/config.txt $INSTALL/usr/share/bootloader
+    fi
 }
