@@ -33,19 +33,20 @@ namespace :build do
     sh "rm -rf #{build_dir}/.stamps/plexht"
     sh "mkdir -p #{build_dir}"
 
+    work_dir = "#{root_dir}/#{build_dir}/plexht-#{$config['version']}"
+    File.open("#{work_dir}/GitRevision.txt", 'w') { |file| file.write($config['version']) }
+
     if $config['version'] == 'wip'
 
       # Create the symlink to use for build
-      work_dir = "#{build_dir}/plexht-wip"
       sh "ln -sf #{root_dir}/../plex-home-theater #{work_dir}"
+      sh "echo \"-`git rev-parse HEAD`\" >> #{work_dir}/GitRevision.txt"
     else
-      work_dir = "#{root_dir}/#{build_dir}/plexht-#{$config['version']}"
       sh "rm -rf #{root_dir}/#{build_dir}/plexht-*"
       sh "mkdir -p #{work_dir}"
       sh "git --work-tree=#{work_dir}  --git-dir=#{root_dir}/plex-home-theater/.git checkout #{$config['version']} -- #{work_dir}"
     end
 
-    File.open("#{work_dir}/GitRevision.txt", 'w') { |file| file.write($config['version']) }
     File.open("#{work_dir}/rasplex_version.txt", 'w') { |file| file.write($config['version'].gsub("RP-","")) }
 
     version_str = <<-eos
