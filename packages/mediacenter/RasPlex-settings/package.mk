@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="RasPlex-settings"
-PKG_VERSION="rasplex-oe5"
+PKG_VERSION="1e90a4cc2426487c46973c224b26343944079381"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="prop."
