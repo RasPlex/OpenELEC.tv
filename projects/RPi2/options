@@ -30,7 +30,7 @@
         # fpa fpe2 fpe3 maverick vfp vfpv3 vfpv3-fp16 vfpv3-d16 vfpv3-d16-fp16
         # vfpv3xd vfpv3xd-fp16 neon neon-fp16 vfpv4 vfpv4-d16 fpv4-sp-d16
         # neon-vfpv4.
-        TARGET_FPU="neon-vfpv4"
+        TARGET_FPU="neon"
         ;;
     esac
 
@@ -57,7 +57,7 @@
 
   # Kernel to use. values can be:
   # default:  default mainline kernel
-    LINUX="3.18"
+    LINUX="default"
 
   # NOOBS supported hex versions
     NOOBS_HEX="1040,1041"
@@ -118,7 +118,7 @@
   # additional Firmware to use (dvb-firmware, misc-firmware, wlan-firmware)
   # Space separated list is supported,
   # e.g. FIRMWARE="dvb-firmware misc-firmware wlan-firmware"
-    FIRMWARE="misc-firmware wlan-firmware"
+    FIRMWARE="misc-firmware wlan-firmware dvb-firmware"
 
   # build and install ATV IR remote support (yes / no)
     ATVCLIENT_SUPPORT="no"
