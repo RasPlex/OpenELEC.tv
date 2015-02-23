@@ -1,0 +1,7 @@
+[Unit]
+Description=Hyperion Daemon
+After=graphical.target
+
+[Service]
+ExecStartPre=/usr/bin/gpio2spi
+ExecStart=/bin/sh /usr/local/hyperion-wrapper
