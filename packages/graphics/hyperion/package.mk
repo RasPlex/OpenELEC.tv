@@ -84,8 +84,8 @@ makeinstall_target() {
   cp deps/* $INSTALL/usr/lib/
   cp hyperion/bin/* $INSTALL/usr/bin/
   cp hyperion/effects/* $INSTALL/etc/hyperion/
-  cp $PKG_DIR/config/hyperion.config.json /etc/
-  cp $PKG_DIR/scripts/hyperion-wrapper /usr/local/
+  cp $PKG_DIR/config/hyperion.config.json $INSTALL/etc/
+  cp $PKG_DIR/scripts/hyperion-wrapper $INSTALL/usr/local/
 
   cd $oldpwd
 }

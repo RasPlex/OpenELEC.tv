@@ -4,4 +4,6 @@ After=graphical.target
 
 [Service]
 ExecStartPre=/usr/bin/gpio2spi
+ExecStartPre=modprobe stk1160
 ExecStart=/bin/sh /usr/local/hyperion-wrapper
+ExecStartPre=rmmod stk1160

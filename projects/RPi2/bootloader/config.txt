@@ -115,6 +115,9 @@
 # Required overlay for LIRC to function
   dtoverlay=lirc-rpi
 
+# Required for hyperion / lightberry
+  dtparam=spi=on
+
 ################################################################################
 # End of default configuration
 # all values below this line were inserted from config.txt.bk (your old config)
