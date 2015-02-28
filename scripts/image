@@ -80,7 +80,11 @@ IMAGE_NAME="$DISTRONAME-$TARGET_VERSION"
   echo "$PROJECT.$TARGET_ARCH" > $INSTALL/etc/arch
   echo "$OPENELEC_VERSION" > $INSTALL/etc/version
   echo "$TARGET_VERSION" > $INSTALL/etc/release
-  echo "$DISTRONAME ($([ "$OFFICIAL" = "yes" ] && echo "official" ||  echo "unofficial")) - Version: $OPENELEC_VERSION" > $INSTALL/etc/openelec-release
+  if [ "$DISTRONAME" == "RasPlex" ];then
+    echo "$DISTRONAME ($([ "$OFFICIAL" = "yes" ] && echo "official" ||  echo "unofficial")) - Version: $RASPLEX_VERSION" > $INSTALL/etc/openelec-release
+  else
+    echo "$DISTRONAME ($([ "$OFFICIAL" = "yes" ] && echo "official" ||  echo "unofficial")) - Version: $OPENELEC_VERSION" > $INSTALL/etc/openelec-release
+  fi
   if [ -n "$GIT_HASH" ]; then
     echo "$GIT_HASH" >> $INSTALL/etc/gitrev
   fi

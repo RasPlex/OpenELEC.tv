@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="plexht"
-PKG_VERSION="$RASPLEX_VERSION"
+PKG_VERSION="$RASPLEX_REF"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

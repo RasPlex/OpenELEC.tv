@@ -1,10 +1,12 @@
 require 'yaml'
+require 'securerandom'
 
 config_path       = File.dirname(File.expand_path(__FILE__)) + '/config.yml'
 build_config_path = File.dirname(File.expand_path(__FILE__)) + '/distributions/RasPlex/version'
 root_dir          = File.dirname(File.expand_path(__FILE__))
 
 Rake::TaskManager.record_task_metadata = true
+GUID=SecureRandom.hex[0..7]
 
 # Main namespace for building
 namespace :build do
@@ -35,12 +37,13 @@ namespace :build do
 
     work_dir = "#{root_dir}/#{build_dir}/plexht-#{$config['version']}"
     File.open("#{work_dir}/GitRevision.txt", 'w') { |file| file.write($config['version']) }
-
+    version = $config['version']
     if $config['version'] == 'wip'
 
+      version = "#{version}-#{GUID}"
       # Create the symlink to use for build
       sh "ln -sf #{root_dir}/../plex-home-theater #{work_dir}"
-      sh "echo \"-`git rev-parse HEAD`\" >> #{work_dir}/GitRevision.txt"
+      sh "echo #{GUID} >> #{work_dir}/GitRevision.txt"
     else
       sh "rm -rf #{root_dir}/#{build_dir}/plexht-*"
       sh "mkdir -p #{work_dir}"
@@ -50,7 +53,7 @@ namespace :build do
     File.open("#{work_dir}/rasplex_version.txt", 'w') { |file| file.write($config['version'].gsub("RP-","")) }
 
     version_str = <<-eos
-RASPLEX_VERSION=#{$config['version']}
+RASPLEX_VERSION=#{version}
 RASPLEX_REF=#{$config['version']}
 eos
     puts version_str
