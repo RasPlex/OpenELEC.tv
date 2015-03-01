@@ -265,6 +265,11 @@ IMAGE_NAME="$DISTRONAME-$TARGET_VERSION"
             cp -R $BOOTLOADER_DIR/files/* $RELEASE_DIR
           fi
 
+          if [ "$BOOTLOADER" = "bcm2835-bootloader" ];then
+            if [ -f $PROJECT_DIR/$PROJECT/bootloader/config.txt ];then
+              cp $PROJECT_DIR/$PROJECT/bootloader/config.txt $RELEASE_DIR/3rdparty/bootloader/config.txt
+            fi
+          fi
           if [ -f $PROJECT_DIR/$PROJECT/bootloader/release ]; then
             . $PROJECT_DIR/$PROJECT/bootloader/release
           elif [ -f "$BOOTLOADER_DIR"/release ]; then
