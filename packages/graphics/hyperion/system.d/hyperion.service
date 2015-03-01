@@ -1,5 +1,7 @@
 [Unit]
 Description=Hyperion Daemon
+ConditionPathExists=/storage/.cache/services/hyperion.conf
+Before=plexht.service
 After=graphical.target
 
 [Service]
@@ -8,3 +10,6 @@ ExecStartPre=/sbin/modprobe stk1160
 ExecStart=/bin/sh /usr/local/hyperion-wrapper
 ExecStop=/bin/killall hyperiond
 ExecStopPost=/sbin/modprobe -r stk1160
+
+[Install]
+WantedBy=plexht.service
