@@ -94,7 +94,11 @@ IMAGE_NAME="$DISTRONAME-$TARGET_VERSION"
   echo -e "VERSION=\"$OPENELEC_VERSION\"" >> $INSTALL/etc/os-release
   echo -e "ID=\"openelec\"" >> $INSTALL/etc/os-release
   echo -e "VERSION_ID=\"$OS_VERSION\"" >> $INSTALL/etc/os-release
-  echo -e "PRETTY_NAME=\"$DISTRONAME ($([ "$OFFICIAL" = "yes" ] && echo "official" ||  echo "unofficial")) - Version: $OPENELEC_VERSION\"" >> $INSTALL/etc/os-release
+  if [ "$DISTRONAME" == "RasPlex" ];then
+    echo -e "PRETTY_NAME=\"$DISTRONAME ($([ "$OFFICIAL" = "yes" ] && echo "official" ||  echo "unofficial")) - Version: $RASPLEX_VERSION\"" >> $INSTALL/etc/os-release
+  else
+    echo -e "PRETTY_NAME=\"$DISTRONAME ($([ "$OFFICIAL" = "yes" ] && echo "official" ||  echo "unofficial")) - Version: $OPENELEC_VERSION\"" >> $INSTALL/etc/os-release
+  fi
   echo -e "HOME_URL=\"http://www.openelec.tv\"" >> $INSTALL/etc/os-release
   echo -e "BUG_REPORT_URL=\"https://github.com/OpenELEC/OpenELEC.tv\"" >> $INSTALL/etc/os-release
   if [ -n "$GIT_HASH" ]; then
@@ -119,7 +123,11 @@ IMAGE_NAME="$DISTRONAME-$TARGET_VERSION"
   echo $GREETING2 >> $INSTALL/etc/issue
   echo $GREETING3 >> $INSTALL/etc/issue
   echo $GREETING4 >> $INSTALL/etc/issue
-  echo "$DISTRONAME ($([ "$OFFICIAL" = "yes" ] && echo "official" ||  echo "unofficial")) Version: $OPENELEC_VERSION" >> $INSTALL/etc/issue
+  if [ "$DISTRONAME" == "RasPlex" ];then
+    echo "$DISTRONAME ($([ "$OFFICIAL" = "yes" ] && echo "official" ||  echo "unofficial")) Version: $RASPLEX_VERSION" >> $INSTALL/etc/issue
+  else
+    echo "$DISTRONAME ($([ "$OFFICIAL" = "yes" ] && echo "official" ||  echo "unofficial")) Version: $OPENELEC_VERSION" >> $INSTALL/etc/issue
+  fi
   if [ -n "$GIT_HASH" ]; then
     echo "$DISTRONAME git: $GIT_HASH" >> $INSTALL/etc/issue
   fi
