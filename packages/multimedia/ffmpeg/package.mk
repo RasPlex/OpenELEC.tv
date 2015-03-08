@@ -18,9 +18,6 @@
 
 PKG_NAME="ffmpeg"
 PKG_VERSION="2.4.6"
-if [ "$MEDIACENTER" = "plexht" ]; then
-  PKG_VERSION="0.10.7"
-fi
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="LGPL"
@@ -56,12 +53,6 @@ if [ "$DEBUG" = yes ]; then
   FFMPEG_DEBUG="--enable-debug --disable-stripping"
 else
   FFMPEG_DEBUG="--disable-debug --enable-stripping"
-fi
-
-if [ "$MEDIACENTER" = "plexht" ]; then
-  FFMPEG_CONFIGURE="--enable-fastdiv --enable-aandct --enable-golomb --enable-huffman --enable-lpc --disable-libdirac --disable-mlib --disable-iwmmxt --disable-mmi"
-else
-  FFMPEG_CONFIGURE=" "
 fi
 
 case "$TARGET_ARCH" in
@@ -116,6 +107,7 @@ configure_target() {
               --sysroot=$SYSROOT_PREFIX \
               --sysinclude="$SYSROOT_PREFIX/usr/include" \
               --target-os="linux" \
+              --extra-version="$PKG_VERSION" \
               --nm="$NM" \
               --ar="$AR" \
               --as="$CC" \
@@ -140,6 +132,7 @@ configure_target() {
               $FFMPEG_DEBUG \
               $FFMPEG_PIC \
               --enable-optimizations \
+              --disable-armv5te --disable-armv6t2 \
               --disable-extra-warnings \
               --disable-ffprobe \
               --disable-ffplay \
@@ -160,7 +153,6 @@ configure_target() {
               --disable-gray \
               --enable-swscale-alpha \
               --disable-small \
-              $FFMPEG_OPTIM \
               --enable-dct \
               --enable-fft \
               --enable-mdct \
@@ -218,12 +210,9 @@ configure_target() {
               --enable-zlib \
               --enable-asm \
               --disable-altivec \
-              $FFMPEG_CONFIGURE \
               $FFMPEG_CPU \
               $FFMPEG_FPU \
-              --disable-vis \
               --enable-yasm \
-              --disable-sram \
               --disable-symver
 }
 
