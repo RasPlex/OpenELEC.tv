@@ -19,7 +19,7 @@
 PKG_NAME="linux"
 case "$LINUX" in
   amlogic)
-    PKG_VERSION="amlogic-3.10-24553c6"
+    PKG_VERSION="amlogic-3.10-16a1118"
     PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
     ;;
   imx6)
@@ -27,7 +27,7 @@ case "$LINUX" in
     PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
     ;;
   *)
-    PKG_VERSION="3.19"
+    PKG_VERSION="3.19.1"
     PKG_URL="http://www.kernel.org/pub/linux/kernel/v3.x/$PKG_NAME-$PKG_VERSION.tar.xz"
     ;;
 esac
