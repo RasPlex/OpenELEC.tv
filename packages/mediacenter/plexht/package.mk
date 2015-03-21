@@ -23,7 +23,7 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.rasplex.com"
 PKG_URL="https://github.com/RasPlex/RasPlex/archive/master.zip"
-PKG_DEPENDS_TARGET="toolchain ninja:host boost Python zlib bzip2 systemd pciutils lzo pcre swig:host libass enca curl rtmpdump fontconfig fribidi tinyxml libjpeg-turbo libpng tiff freetype jasper libogg libcdio libmodplug libmpeg2 taglib libxml2 libxslt yajl sqlite libvorbis ffmpeg libshairplay libsamplerate flac SDL_mixer lame breakpad tcpdump strace hyperion"
+PKG_DEPENDS_TARGET="toolchain ninja:host boost Python zlib bzip2 systemd pciutils lzo pcre swig:host libass enca curl rtmpdump fontconfig fribidi tinyxml libjpeg-turbo libpng tiff freetype jasper libogg libcdio libmodplug libmpeg2 taglib libxml2 libxslt yajl sqlite libvorbis ffmpeg libshairplay libsamplerate flac SDL_mixer lame breakpad tcpdump strace"
 PKG_DEPENDS_HOST="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="mediacenter"
@@ -48,7 +48,7 @@ fi
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET lzo:host SDL:host SDL_image:host plexht:host"
 
 if [ $PROJECT = "RPi" -o $PROJECT = "RPi2" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET remotepi-board"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET remotepi-board hyperion"
 fi
 
 if [ "$DISPLAYSERVER" = "x11" ]; then
@@ -249,7 +249,24 @@ if [ $PROJECT = "RPi" -o $PROJECT = "RPi2" ]; then
         -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
         $SRC_DIR
 else
-  exit 1
+  export PYTHON_EXEC="$SYSROOT_PREFIX/usr/bin/python2.7"
+  cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
+        -DENABLE_PYTHON=ON \
+        -DEXTERNAL_PYTHON_HOME="$SYSROOT_PREFIX/usr" \
+        -DPYTHON_EXEC="$PYTHON_EXEC" \
+        -DSWIG_EXECUTABLE=`which swig` \
+        -DSWIG_DIR="$ROOT/$BUILD/toolchain" \
+        -DCMAKE_PREFIX_PATH="$SYSROOT_PREFIX" \
+        -DCMAKE_LIBRARY_PATH="$SYSROOT_PREFIX/usr/lib" \
+        -DCMAKE_INCLUDE_PATH="$SYSROOT_PREFIX/usr/include;$SYSROOT_PREFIX/usr/include/python2.7;$SYSROOT_PREFIX/usr/lib/dbus-1.0/include" \
+        -DCOMPRESS_TEXTURES=OFF \
+        -DENABLE_DUMP_SYMBOLS=ON \
+        -DENABLE_AUTOUPDATE=OFF \
+        -DUSE_INTERNAL_FFMPEG=OFF \
+        -DOPENELEC=ON \
+        -DCMAKE_INSTALL_PREFIX=/usr/lib/plexht \
+        -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+        $SRC_DIR
 fi
 }
 
