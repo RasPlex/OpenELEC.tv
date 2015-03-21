@@ -42,8 +42,8 @@ rm -rf $BASEDIR/$LOGDIR
 mkdir -p $BASEDIR/$LOGDIR
 
 # kodi.log
-  LOGFILE="01_KODI.log"
-  for i in `find /storage/.kodi/temp/ -type f -name "*.log"`; do
+  LOGFILE="01_PHT.log"
+  for i in `find /storage/.plexht/temp/ -type f -name "*.log"`; do
     getlog_cmd cat $i
   done
 
@@ -130,8 +130,8 @@ mkdir -p $BASEDIR/$LOGDIR
 
 # addons
   LOGFILE="11_Addons.log"
-  for i in /storage/.kodi/userdata/addon_data/*/*.log \
-      /storage/.kodi/userdata/addon_data/*/log/* \
+  for i in /storage/.plexht/userdata/addon_data/*/*.log \
+      /storage/.plexht/userdata/addon_data/*/log/* \
   ; do
     if [ -f "$i" ] ; then
       getlog_cmd cat $i
