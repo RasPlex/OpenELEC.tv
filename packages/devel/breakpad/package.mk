@@ -17,12 +17,12 @@
 ################################################################################
 
 PKG_NAME="breakpad"
-PKG_VERSION="master-update"
+PKG_VERSION="rasplex-oe5"
 PKG_REV=""
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="https://code.google.com/p/google-breakpad/"
-PKG_URL="https://github.com/plexinc/$PKG_NAME/archive/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.gz https://github.com/plexinc/breakpad-lss/archive/master/breakpad-lss-master.tar.gz"
+PKG_URL="https://github.com/RasPlex/$PKG_NAME/archive/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.gz https://github.com/plexinc/breakpad-lss/archive/master/breakpad-lss-master.tar.gz"
 PKG_DEPENDS_HOST="toolchain"
 PKG_DEPENDS_TARGET="toolchain breakpad:host"
 PKG_PRIORITY="optional"
@@ -37,6 +37,7 @@ unpack() {
   mkdir -p $BUILD/$PKG_NAME-$PKG_VERSION
   ls -al $SOURCES/$PKG_NAME/$PKG_NAME-*.tar.gz
   tar xzf $SOURCES/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz -C $BUILD/$PKG_NAME-$PKG_VERSION --strip-components=1
+  mkdir -p $BUILD/$PKG_NAME-$PKG_VERSION/src/third_party/lss
   tar xzf $SOURCES/$PKG_NAME/breakpad-lss-master.tar.gz -C $BUILD/$PKG_NAME-$PKG_VERSION/src/third_party/lss --strip-components=1
 }
 
