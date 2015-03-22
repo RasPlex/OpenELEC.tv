@@ -201,8 +201,8 @@ pre_configure_target() {
 # Todo: kodi segfaults on exit when building with LTO support
   strip_lto
 
-  export CFLAGS="$CFLAGS $KODI_CFLAGS -g"
-  export CXXFLAGS="$CXXFLAGS $KODI_CXXFLAGS -g"
+  export CFLAGS="$CFLAGS $KODI_CFLAGS"
+  export CXXFLAGS="$CXXFLAGS $KODI_CXXFLAGS"
   export LIBS="$LIBS -lz"
 }
 
@@ -216,10 +216,10 @@ configure_target() {
 # configure the build
   export PKG_CONFIG_PATH=$SYSROOT_PREFIX/usr/lib/pkgconfig
   
-if [ "$OPENELEC_VERSION" = devel ]; then
+if [ "$DEBUG" = yes ]; then
     CMAKE_BUILD_TYPE="Debug"
 else
-    CMAKE_BUILD_TYPE="Release"
+    CMAKE_BUILD_TYPE="RelWithDebInfo"
 fi
 
 if [ -z "$JENKINS_URL" ]; then
