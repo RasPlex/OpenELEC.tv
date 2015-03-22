@@ -208,7 +208,7 @@ pre_configure_target() {
 
 configure_target() {
 # dont use some optimizations because of build problems
-  LDFLAGS=`echo $LDFLAGS | sed -e "s|-Wl,--as-needed||"`
+  LDFLAGS=`echo $LDFLAGS | sed -e "s|-Wl,--as-needed||" -e "s|-s||"`
 
 # strip compiler optimization
   strip_lto
@@ -280,7 +280,7 @@ make_target() {
   ninja -j$CONCURRENCY_MAKE_LEVEL
 
 # generate breakpad symbols
-  ninja plex/CMakeFiles/PlexHomeTheater_symbols
+  ninja symbols
 
 # Strip the executable now that we have our breakpad symbols
   $STRIP plex/plexhometheater
