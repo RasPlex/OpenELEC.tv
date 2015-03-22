@@ -208,7 +208,7 @@ pre_configure_target() {
 
 configure_target() {
 # dont use some optimizations because of build problems
-  LDFLAGS=`echo $LDFLAGS | sed -e "s|-Wl,--as-needed||" -e "s|-s||"`
+  LDFLAGS=`echo $LDFLAGS | sed -e "s|-Wl,--as-needed||" -e "s| -s||"`
 
 # strip compiler optimization
   strip_lto
