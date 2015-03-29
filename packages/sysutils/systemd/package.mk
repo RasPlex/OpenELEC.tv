@@ -33,6 +33,8 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="yes"
 
 PKG_CONFIGURE_OPTS_TARGET="ac_cv_func_malloc_0_nonnull=yes \
+                           ac_cv_have_decl_IFLA_BOND_AD_INFO=no \
+                           ac_cv_have_decl_IFLA_BRPORT_UNICAST_FLOOD=no \
                            KMOD=/usr/bin/kmod \
                            --disable-nls \
                            --disable-gtk-doc \
