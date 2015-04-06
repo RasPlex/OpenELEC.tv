@@ -17,13 +17,13 @@
 ################################################################################
 
 PKG_NAME="hyperion"
-PKG_VERSION="2a77b551c5b504f4ce9b0a179d4c20eaf6128f6b"
+PKG_VERSION="e93bd2fb303be6b91e0c241efb30dc0a1bf04b2f"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="https://github.com/tvdzwan/hyperion"
-PKG_URL="https://github.com/tvdzwan/hyperion/archive/$PKG_VERSION/hyperion-$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_URL="https://github.com/tvdzwan/hyperion/archive/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.gz"
+PKG_DEPENDS_TARGET="toolchain ninja:host Python libusb protobuf Qt4"
 PKG_PRIORITY="optional"
 PKG_SECTION="graphics"
 PKG_SHORTDESC="hyperion: ambilent daemon"
@@ -32,72 +32,62 @@ PKG_LONGDESC="hyperion: samples video frames and drives an LED backlight ring to
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-unpack() {
-  rm -rf $BUILD/$PKG_NAME-$PKG_VERSION
-  mkdir -p $BUILD/$PKG_NAME-$PKG_VERSION
-  if [ -f $SOURCES/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz ]; then
-    tar xzf $SOURCES/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz -C $BUILD/$PKG_NAME-$PKG_VERSION --strip-components=1
-  else
-    tar xzf $SOURCES/$PKG_NAME/service.openelec.settings-$PKG_VERSION.tar.gz -C $BUILD/$PKG_NAME-$PKG_VERSION --strip-components=1
-  fi
-
-}
-
-hack() {
-  oldpwd=`pwd`
-
-  cd $ROOT/$BUILD/$PKG_NAME-$PKG_VERSION
-  mkdir dist
-  cd dist
-
-  wget https://raw.githubusercontent.com/tvdzwan/hyperion/master/deploy/hyperion.tar.gz
-  wget https://raw.githubusercontent.com/tvdzwan/hyperion/master/deploy/hyperion.deps.openelec-rpi.tar.gz
-  tar -xvpf hyperion.tar.gz
-  mkdir deps
-  cd deps
-  tar -xvpf ../hyperion.deps.openelec-rpi.tar.gz
-  cd ..
-
-  cd $oldpwd
-}
-
+if [ "$DISPLAYSERVER" = "x11" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libX11"
+fi
 
 configure_target() {
-  echo "STUB"
+if [ "$DEBUG" = yes ]; then
+  CMAKE_BUILD_TYPE="Debug"
+else
+  CMAKE_BUILD_TYPE="Release"
+fi
+
+if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
+  cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
+        -DCMAKE_INSTALL_PREFIX="/usr" \
+        -DQT_QMAKE_EXECUTABLE="${SYSROOT_PREFIX}/usr/bin/qmake" \
+        -DENABLE_WS2812BPWM=ON \
+        -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+        ..
+elif [ "$DISPLAYSERVER" = "x11" ]; then
+  cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
+        -DCMAKE_INSTALL_PREFIX="/usr" \
+        -DQT_QMAKE_EXECUTABLE="${SYSROOT_PREFIX}/usr/bin/qmake" \
+        -DENABLE_DISPMANX=OFF \
+        -DENABLE_X11=ON \
+        -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+        ..
+else
+  exit 0
+fi
 }
 
 make_target() {
-  hack
+  ninja -j$CONCURRENCY_MAKE_LEVEL
 }
 
 makeinstall_target() {
-  oldpwd=`pwd`
+  mkdir -p $INSTALL/usr/bin
+    cp -PRv bin/hyperiond $INSTALL/usr/bin
+    cp -PRv bin/hyperion-remote $INSTALL/usr/bin
+    cp -PRv bin/hyperion-v4l2 $INSTALL/usr/bin
 
-  cd $ROOT/$BUILD/$PKG_NAME-$PKG_VERSION/dist
+if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
+    cp -PRv bin/dispmanx2png $INSTALL/usr/bin
+    cp -PRv bin/gpio2spi $INSTALL/usr/bin
+elif [ "$DISPLAYSERVER" = "x11" ]; then
+    cp -PRv bin/hyperion-x11 $INSTALL/usr/bin
+fi
 
-  mkdir -p $INSTALL/usr/lib/
-  mkdir -p $INSTALL/usr/bin/
-  mkdir -p $INSTALL/usr/local/
-  mkdir -p $INSTALL/etc/hyperion/
+  mkdir -p $INSTALL/usr/share/hyperion/effects
+    cp -PRv ../effects/* $INSTALL/usr/share/hyperion/effects
 
-# copy the files
-  cp deps/* $INSTALL/usr/lib/
-  cp hyperion/bin/* $INSTALL/usr/bin/
-  cp hyperion/effects/* $INSTALL/etc/hyperion/
-  cp $PKG_DIR/config/hyperion.config.json $INSTALL/etc/
-  cp $PKG_DIR/scripts/hyperion-wrapper $INSTALL/usr/local/
-
-  cd $oldpwd
-}
-
-post_makeinstall_target() {
-  echo "STUB"
+  mkdir -p $INSTALL/usr/share/services
+    cp -PRv $PKG_DIR/default.d/*.json $INSTALL/usr/share/services
 }
 
 post_install() {
-
-# enable default services
+  enable_service hyperion-defaults.service
   enable_service hyperion.service
-
 }
-

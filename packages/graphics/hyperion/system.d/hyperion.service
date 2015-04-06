@@ -1,14 +1,13 @@
 [Unit]
-Description=Hyperion Daemon
+Description=Hyperion daemon
 ConditionPathExists=/storage/.cache/services/hyperion.conf
 Before=plexht.service
-After=graphical.target
+After=graphical.target hyperion-defaults.service
+Requires=hyperion-defaults.service
 
 [Service]
-ExecStartPre=/usr/bin/gpio2spi
 ExecStartPre=/sbin/modprobe stk1160
-ExecStart=/bin/sh /usr/local/hyperion-wrapper
-ExecStop=/bin/killall hyperiond
+ExecStart=/usr/bin/hyperiond /storage/.config/hyperion.config.json
 ExecStopPost=/sbin/modprobe -r stk1160
 
 [Install]

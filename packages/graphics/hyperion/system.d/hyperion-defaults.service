@@ -1,0 +1,10 @@
+[Unit]
+Description=Hyperion defaults
+ConditionPathExists=/storage/.cache/services/hyperion.conf
+ConditionPathExists=!/storage/.config/hyperion.config.json
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'cp /usr/share/services/hyperion.config.json /storage/.config/'
+RemainAfterExit=yes

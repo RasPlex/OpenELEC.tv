@@ -1,8 +1,0 @@
-#!/bin/sh
-# This script is a simple wrapper to allow overriding the system hyperion config
-
-if [ -f /storage/.config/hyperion.config.json ];then
-  exec /usr/bin/hyperiond /storage/.config/hyperion.config.json
-else
-  exec /usr/bin/hyperiond /etc/hyperion.config.json
-fi
