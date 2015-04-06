@@ -1,0 +1,111 @@
+From 576efdeb5d6faa2bffa9f92eacb0cad582abd84f Mon Sep 17 00:00:00 2001
+From: Jonas Karlman <jonas@kwiboo.se>
+Date: Mon, 6 Apr 2015 21:31:09 +0200
+Subject: [PATCH] Add openelec mkspec
+
+---
+ configure                                      |  3 +-
+ mkspecs/qws/linux-openelec-g++/qmake.conf      | 27 +++++++++++++++++
+ mkspecs/qws/linux-openelec-g++/qplatformdefs.h | 42 ++++++++++++++++++++++++++
+ 3 files changed, 71 insertions(+), 1 deletion(-)
+ create mode 100644 mkspecs/qws/linux-openelec-g++/qmake.conf
+ create mode 100644 mkspecs/qws/linux-openelec-g++/qplatformdefs.h
+
+diff --git a/configure b/configure
+index a9ba7c8..f9b6d3f 100755
+--- a/configure
++++ b/configure
+@@ -239,7 +239,8 @@ DeviceVar()
+             ;;
+     esac
+ 
+-    echo "$2" "$eq" "$3" >> "$DEVICE_VARS_FILE"
++    eval val="$3"
++    echo "$2" "$eq" "$val" >> "$DEVICE_VARS_FILE"
+ }
+ 
+ #-------------------------------------------------------------------------------
+diff --git a/mkspecs/qws/linux-openelec-g++/qmake.conf b/mkspecs/qws/linux-openelec-g++/qmake.conf
+new file mode 100644
+index 0000000..2fef2b3
+--- /dev/null
++++ b/mkspecs/qws/linux-openelec-g++/qmake.conf
+@@ -0,0 +1,27 @@
++#
++# qmake configuration for linux-openelec-g++
++#
++
++include(../../common/linux.conf)
++include(../../common/gcc-base-unix.conf)
++include(../../common/g++-unix.conf)
++include(../../common/qws.conf)
++
++load(device_config)
++
++# modifications to g++.conf
++QMAKE_CC                = $${CROSS_COMPILE}gcc
++QMAKE_CXX               = $${CROSS_COMPILE}g++
++QMAKE_LINK              = $${CROSS_COMPILE}g++
++QMAKE_LINK_SHLIB        = $${CROSS_COMPILE}g++
++
++# modifications to linux.conf
++QMAKE_AR                = $${CROSS_COMPILE}ar cqs
++QMAKE_OBJCOPY           = $${CROSS_COMPILE}objcopy
++QMAKE_STRIP             = $${CROSS_COMPILE}strip
++
++QMAKE_CFLAGS_RELEASE    = $${TARGET_CFLAGS}
++QMAKE_CXXFLAGS_RELEASE  = $${TARGET_CXXFLAGS}
++QMAKE_LFLAGS_RELEASE    = $${TARGET_LDFLAGS}
++
++load(qt_config)
+diff --git a/mkspecs/qws/linux-openelec-g++/qplatformdefs.h b/mkspecs/qws/linux-openelec-g++/qplatformdefs.h
+new file mode 100644
+index 0000000..dece7c5
+--- /dev/null
++++ b/mkspecs/qws/linux-openelec-g++/qplatformdefs.h
+@@ -0,0 +1,42 @@
++/****************************************************************************
++**
++** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the qmake spec of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#include "../../linux-g++/qplatformdefs.h"
+-- 
+2.3.4
+
