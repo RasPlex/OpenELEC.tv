@@ -17,12 +17,12 @@
 ################################################################################
 
 PKG_NAME="breakpad"
-PKG_VERSION="rasplex-oe5"
-PKG_REV=""
+PKG_VERSION="368c899f5a1e2404e28fbbd1bca9218961cc193e"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="https://code.google.com/p/google-breakpad/"
-PKG_URL="https://github.com/RasPlex/$PKG_NAME/archive/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.gz https://github.com/plexinc/breakpad-lss/archive/master/breakpad-lss-master.tar.gz"
+PKG_URL="https://github.com/RasPlex/$PKG_NAME/archive/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.gz https://linux-syscall-support.googlecode.com/svn/trunk/lss/linux_syscall_support.h"
 PKG_DEPENDS_HOST="toolchain"
 PKG_DEPENDS_TARGET="toolchain breakpad:host"
 PKG_PRIORITY="optional"
@@ -31,49 +31,16 @@ PKG_SHORTDESC="breakpad: An open-source multi-platform crash reporting system"
 PKG_LONGDESC="breakpad: An open-source multi-platform crash reporting system"
 
 PKG_IS_ADDON="no"
-PKG_AUTORECONF="no"
+PKG_AUTORECONF="yes"
 
-unpack() {
-  mkdir -p $BUILD/$PKG_NAME-$PKG_VERSION
-  ls -al $SOURCES/$PKG_NAME/$PKG_NAME-*.tar.gz
-  tar xzf $SOURCES/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz -C $BUILD/$PKG_NAME-$PKG_VERSION --strip-components=1
-  mkdir -p $BUILD/$PKG_NAME-$PKG_VERSION/src/third_party/lss
-  tar xzf $SOURCES/$PKG_NAME/breakpad-lss-master.tar.gz -C $BUILD/$PKG_NAME-$PKG_VERSION/src/third_party/lss --strip-components=1
-}
+PKG_CONFIGURE_OPTS_HOST="--enable-selftest"
+PKG_CONFIGURE_OPTS_TARGET="--disable-processor --disable-tools"
 
-make_host() {
-  make $PKG_MAKE_OPTS_TARGET
-}
-
-make_target() {
-  make $PKG_MAKE_OPTS_TARGET
-}
-
-pre_configure_target() {
-  export CFLAGS="$CFLAGS -fPIC"
-  export CXXFLAGS="$CXXFLAGS -fPIC"
-  export LDFLAGS="$LDFLAGS -fPIC"
-}
-
-configure_target() {
-if [ $PROJECT = "RPi" -o $PROJECT = "RPi2" ]; then
-  cmake -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
-		-DCMAKE_PREFIX_PATH="$SYSROOT_PREFIX" \
-		-DCMAKE_LIBRARY_PATH="$SYSROOT_PREFIX/usr/lib" \
-		-DCMAKE_INCLUDE_PATH="$SYSROOT_PREFIX/usr/include;$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux;$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads" \
-		-DCMAKE_INSTALL_PREFIX=/usr \
-		..
-else
-  cmake -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF \
-		-DCMAKE_PREFIX_PATH="$SYSROOT_PREFIX" \
-		-DCMAKE_LIBRARY_PATH="$SYSROOT_PREFIX/usr/lib" \
-		-DCMAKE_INCLUDE_PATH="$SYSROOT_PREFIX/usr/include" \
-		-DCMAKE_INSTALL_PREFIX=/usr \
-		..
-fi
+post_unpack() {
+  mkdir -p $PKG_BUILD/src/third_party/lss
+  cp -PRf $SOURCES/$PKG_NAME/linux_syscall_support.h $PKG_BUILD/src/third_party/lss
 }
 
 post_makeinstall_target() {
-  cd ../src/client/linux
-  find -type f -name \*.h -exec install -D {} $SYSROOT_PREFIX/usr/include/breakpad/client/linux/{} \;
+  rm -rf $INSTALL/usr/bin
 }
