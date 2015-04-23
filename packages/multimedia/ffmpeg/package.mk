@@ -19,7 +19,7 @@
 PKG_NAME="ffmpeg"
 PKG_VERSION="2.4.6"
 if [ "$MEDIACENTER" = "plexht" ]; then
-  PKG_VERSION="0.10.7"
+  PKG_VERSION="0.10.16"
 fi
 PKG_REV="1"
 PKG_ARCH="any"
