@@ -1,4 +1,4 @@
-From 7b3d1747b3345ecc7b1d49b7b920b7ada5e1eb36 Mon Sep 17 00:00:00 2001
+From 37dfde26fbb38bdfb1f3b7d72444132f021020f5 Mon Sep 17 00:00:00 2001
 From: Alex Deucher <alexander.deucher@amd.com>
 Date: Mon, 23 Feb 2015 10:11:49 -0500
 Subject: [PATCH 1/2] drm/radeon: add an output_csc property
@@ -23,10 +23,10 @@ Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
  2 files changed, 22 insertions(+)
 
 diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
-index 913fafa..d57dfb9 100644
+index 1021169..b6ed51a 100644
 --- a/drivers/gpu/drm/radeon/radeon_display.c
 +++ b/drivers/gpu/drm/radeon/radeon_display.c
-@@ -1382,6 +1382,13 @@ static struct drm_prop_enum_list radeon_dither_enum_list[] =
+@@ -1379,6 +1379,13 @@ static struct drm_prop_enum_list radeon_dither_enum_list[] =
  	{ RADEON_FMT_DITHER_ENABLE, "on" },
  };
  
@@ -40,7 +40,7 @@ index 913fafa..d57dfb9 100644
  static int radeon_modeset_create_props(struct radeon_device *rdev)
  {
  	int sz;
-@@ -1444,6 +1451,12 @@ static int radeon_modeset_create_props(struct radeon_device *rdev)
+@@ -1441,6 +1448,12 @@ static int radeon_modeset_create_props(struct radeon_device *rdev)
  					 "dither",
  					 radeon_dither_enum_list, sz);
  
@@ -54,7 +54,7 @@ index 913fafa..d57dfb9 100644
  }
  
 diff --git a/drivers/gpu/drm/radeon/radeon_mode.h b/drivers/gpu/drm/radeon/radeon_mode.h
-index 390db89..d912939 100644
+index f78087a..49f4c9d 100644
 --- a/drivers/gpu/drm/radeon/radeon_mode.h
 +++ b/drivers/gpu/drm/radeon/radeon_mode.h
 @@ -85,6 +85,13 @@ enum radeon_hpd_id {
@@ -81,10 +81,9 @@ index 390db89..d912939 100644
  	struct edid *bios_hardcoded_edid;
  	int bios_hardcoded_edid_size;
 -- 
-1.9.1
+1.8.3.1
 
-
-From d0208d7f03c19ad3ec6d486bf95836679ad31d02 Mon Sep 17 00:00:00 2001
+From 2ed0abe27e4358d39b5c3fc2800478c5cafa59d8 Mon Sep 17 00:00:00 2001
 From: Alex Deucher <alexander.deucher@amd.com>
 Date: Mon, 23 Feb 2015 10:59:36 -0500
 Subject: [PATCH 2/2] drm/radeon: implement output csc property for DCE5+
@@ -96,9 +95,6 @@ bug:
 https://bugs.freedesktop.org/show_bug.cgi?id=83226
 
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-
-Conflicts:
-	drivers/gpu/drm/radeon/radeon_mode.h
 ---
  drivers/gpu/drm/radeon/atombios_crtc.c     |  6 ++++
  drivers/gpu/drm/radeon/radeon_connectors.c | 52 ++++++++++++++++++++++++++++++
@@ -124,10 +120,10 @@ index ed644a4..7d827cb 100644
  		return false;
  	if (!atombios_crtc_prepare_pll(crtc, adjusted_mode))
 diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
-index 26baa9c..aa68f8c 100644
+index 27def67..0a371a1 100644
 --- a/drivers/gpu/drm/radeon/radeon_connectors.c
 +++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -724,6 +724,30 @@ static int radeon_connector_set_property(struct drm_connector *connector, struct
+@@ -725,6 +725,30 @@ static int radeon_connector_set_property(struct drm_connector *connector, struct
  		radeon_property_change_mode(&radeon_encoder->base);
  	}
  
@@ -158,7 +154,7 @@ index 26baa9c..aa68f8c 100644
  	return 0;
  }
  
-@@ -1864,6 +1888,10 @@ radeon_add_atom_connector(struct drm_device *dev,
+@@ -1872,6 +1896,10 @@ radeon_add_atom_connector(struct drm_device *dev,
  			drm_object_attach_property(&radeon_connector->base.base,
  						   dev->mode_config.scaling_mode_property,
  						   DRM_MODE_SCALE_NONE);
@@ -169,7 +165,7 @@ index 26baa9c..aa68f8c 100644
  			break;
  		case DRM_MODE_CONNECTOR_DVII:
  		case DRM_MODE_CONNECTOR_DVID:
-@@ -1896,6 +1924,10 @@ radeon_add_atom_connector(struct drm_device *dev,
+@@ -1904,6 +1932,10 @@ radeon_add_atom_connector(struct drm_device *dev,
  				drm_object_attach_property(&radeon_connector->base.base,
  							   rdev->mode_info.audio_property,
  							   RADEON_AUDIO_AUTO);
@@ -180,7 +176,7 @@ index 26baa9c..aa68f8c 100644
  
  			subpixel_order = SubPixelHorizontalRGB;
  			connector->interlace_allowed = true;
-@@ -1942,6 +1974,10 @@ radeon_add_atom_connector(struct drm_device *dev,
+@@ -1950,6 +1982,10 @@ radeon_add_atom_connector(struct drm_device *dev,
  				drm_object_attach_property(&radeon_connector->base.base,
  							   dev->mode_config.scaling_mode_property,
  							   DRM_MODE_SCALE_NONE);
@@ -191,7 +187,7 @@ index 26baa9c..aa68f8c 100644
  			/* no HPD on analog connectors */
  			radeon_connector->hpd.hpd = RADEON_HPD_NONE;
  			connector->polled = DRM_CONNECTOR_POLL_CONNECT;
-@@ -1964,6 +2000,10 @@ radeon_add_atom_connector(struct drm_device *dev,
+@@ -1972,6 +2008,10 @@ radeon_add_atom_connector(struct drm_device *dev,
  				drm_object_attach_property(&radeon_connector->base.base,
  							   dev->mode_config.scaling_mode_property,
  							   DRM_MODE_SCALE_NONE);
@@ -202,7 +198,7 @@ index 26baa9c..aa68f8c 100644
  			/* no HPD on analog connectors */
  			radeon_connector->hpd.hpd = RADEON_HPD_NONE;
  			connector->interlace_allowed = true;
-@@ -2015,6 +2055,10 @@ radeon_add_atom_connector(struct drm_device *dev,
+@@ -2023,6 +2063,10 @@ radeon_add_atom_connector(struct drm_device *dev,
  							      rdev->mode_info.load_detect_property,
  							      1);
  			}
@@ -213,7 +209,7 @@ index 26baa9c..aa68f8c 100644
  			connector->interlace_allowed = true;
  			if (connector_type == DRM_MODE_CONNECTOR_DVII)
  				connector->doublescan_allowed = true;
-@@ -2060,6 +2104,10 @@ radeon_add_atom_connector(struct drm_device *dev,
+@@ -2068,6 +2112,10 @@ radeon_add_atom_connector(struct drm_device *dev,
  							   rdev->mode_info.audio_property,
  							   RADEON_AUDIO_AUTO);
  			}
@@ -224,7 +220,7 @@ index 26baa9c..aa68f8c 100644
  			subpixel_order = SubPixelHorizontalRGB;
  			connector->interlace_allowed = true;
  			if (connector_type == DRM_MODE_CONNECTOR_HDMIB)
-@@ -2108,6 +2156,10 @@ radeon_add_atom_connector(struct drm_device *dev,
+@@ -2116,6 +2164,10 @@ radeon_add_atom_connector(struct drm_device *dev,
  							   rdev->mode_info.audio_property,
  							   RADEON_AUDIO_AUTO);
  			}
@@ -236,7 +232,7 @@ index 26baa9c..aa68f8c 100644
  			/* in theory with a DP to VGA converter... */
  			connector->doublescan_allowed = false;
 diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
-index d57dfb9..d2e9e9e 100644
+index b6ed51a..4d26443 100644
 --- a/drivers/gpu/drm/radeon/radeon_display.c
 +++ b/drivers/gpu/drm/radeon/radeon_display.c
 @@ -154,7 +154,7 @@ static void dce5_crtc_load_lut(struct drm_crtc *crtc)
@@ -249,7 +245,7 @@ index d57dfb9..d2e9e9e 100644
  	/* XXX match this to the depth of the crtc fmt block, move to modeset? */
  	WREG32(0x6940 + radeon_crtc->crtc_offset, 0);
 diff --git a/drivers/gpu/drm/radeon/radeon_mode.h b/drivers/gpu/drm/radeon/radeon_mode.h
-index d912939..25d523c 100644
+index 49f4c9d..60043bf 100644
 --- a/drivers/gpu/drm/radeon/radeon_mode.h
 +++ b/drivers/gpu/drm/radeon/radeon_mode.h
 @@ -366,6 +366,7 @@ struct radeon_crtc {
@@ -260,14 +256,14 @@ index d912939..25d523c 100644
  };
  
  struct radeon_encoder_primary_dac {
-@@ -458,6 +459,7 @@ struct radeon_encoder {
- 	int audio_polling_active;
+@@ -459,6 +460,7 @@ struct radeon_encoder {
  	bool is_ext_encoder;
  	u16 caps;
+ 	struct radeon_audio_funcs *audio;
 +	enum radeon_output_csc output_csc;
  };
  
  struct radeon_connector_atom_dig {
 -- 
-1.9.1
+1.8.3.1
 
