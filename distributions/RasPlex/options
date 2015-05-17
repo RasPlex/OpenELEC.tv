@@ -129,10 +129,10 @@
   SFTP_SERVER="yes"
 
 # build and install PPP support (yes / no)
-  PPTP_SUPPORT="no"
+  PPTP_SUPPORT="yes"
 
 # build and install OpenVPN support (yes / no)
-  OPENVPN_SUPPORT="no"
+  OPENVPN_SUPPORT="yes"
 
 # build and install diskmounter support (udevil)
 # this service provide auto mounting support for external drives in the
