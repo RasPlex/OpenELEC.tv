@@ -17,12 +17,12 @@
 ################################################################################
 
 PKG_NAME="libass"
-PKG_VERSION="0.12.0"
+PKG_VERSION="72328ce2fd33ce1519e89c0f82d5e18dffb1c8b8"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="BSD"
 PKG_SITE="http://code.google.com/p/libass/"
-PKG_URL="https://github.com/libass/libass/releases/download/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_URL="https://github.com/libass/libass/archive/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain freetype fontconfig enca fribidi"
 PKG_PRIORITY="optional"
 PKG_SECTION="multimedia"
