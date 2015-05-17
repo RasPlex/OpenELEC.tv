@@ -33,8 +33,8 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="yes"
 
 # package specific configure options
-PKG_CONFIGURE_OPTS_TARGET="--enable-static \
-                           --disable-shared \
+PKG_CONFIGURE_OPTS_TARGET="--disable-static \
+                           --enable-shared \
                            --disable-rpath \
                            --disable-altivec \
                            --disable-doxygen-docs \
