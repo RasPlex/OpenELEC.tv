@@ -239,6 +239,12 @@ IMAGE_NAME="$DISTRONAME-$TARGET_VERSION"
 # set permissions
   chmod 0644 $TARGET_IMG/$IMAGE_NAME.system
 
+# copy symbols
+  if [ "$DISTRONAME" == "RasPlex" -a -n "$JENKINS_URL" ]; then
+    cp -PR $BUILD/plexht-*/.$TARGET_NAME/*.symbols.bz2 $TARGET_IMG/$IMAGE_NAME.plexht.symbols.bz2
+    chmod 0644 $TARGET_IMG/$IMAGE_NAME.plexht.symbols.bz2
+  fi
+
   if [ "$1" = "release" -o "$1" = "mkimage" ]; then
 
     RELEASE_DIR="target/$IMAGE_NAME"
