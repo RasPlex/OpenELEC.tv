@@ -1,0 +1,23 @@
+commit e0d5299748a993f431190d243211f9db7df3235e
+Author: Jonas Karlman <jonas@kwiboo.se>
+Date:   Tue May 26 21:43:18 2015 +0200
+
+    Reduce cache size
+
+diff --git a/libass/ass_render.h b/libass/ass_render.h
+index 2136049..68dfd00 100644
+--- a/libass/ass_render.h
++++ b/libass/ass_render.h
+@@ -44,9 +44,9 @@ typedef struct ass_shaper ASS_Shaper;
+ #include "ass_bitmap.h"
+ #include "ass_rasterizer.h"
+ 
+-#define GLYPH_CACHE_MAX 10000
+-#define BITMAP_CACHE_MAX_SIZE 500 * 1048576
+-#define COMPOSITE_CACHE_MAX_SIZE 500 * 1048576
++#define GLYPH_CACHE_MAX 1000
++#define BITMAP_CACHE_MAX_SIZE 30 * 1048576
++#define COMPOSITE_CACHE_MAX_SIZE 30 * 1048576
+ 
+ #define PARSED_FADE (1<<0)
+ #define PARSED_A    (1<<1)
