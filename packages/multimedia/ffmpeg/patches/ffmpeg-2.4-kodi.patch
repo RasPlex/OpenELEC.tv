@@ -69,7 +69,7 @@ diff --git a/libavformat/matroskadec.c b/libavformat/matroskadec.c
 index beb1aef..4430658 100644
 --- a/libavformat/matroskadec.c
 +++ b/libavformat/matroskadec.c
-@@ -2926,8 +2926,8 @@ static int matroska_read_seek(AVFormatContext *s, int stream_index,
+@@ -2929,8 +2929,8 @@ static int matroska_read_seek(AVFormatContext *s, int stream_index,
      timestamp = FFMAX(timestamp, st->index_entries[0].timestamp);
  
      if ((index = av_index_search_timestamp(st, timestamp, flags)) < 0) {
@@ -80,7 +80,7 @@ index beb1aef..4430658 100644
          matroska->current_id = 0;
          while ((index = av_index_search_timestamp(st, timestamp, flags)) < 0) {
              matroska_clear_queue(matroska);
-@@ -2936,16 +2936,11 @@ static int matroska_read_seek(AVFormatContext *s, int stream_index,
+@@ -2939,17 +2939,12 @@ static int matroska_read_seek(AVFormatContext *s, int stream_index,
          }
      }
  
@@ -89,6 +89,7 @@ index beb1aef..4430658 100644
          goto err;
  
      index_min = index;
+     tracks = matroska->tracks.elem;
      for (i = 0; i < matroska->tracks.nb_elem; i++) {
 -        tracks[i].audio.pkt_cnt        = 0;
 -        tracks[i].audio.sub_packet_cnt = 0;
@@ -97,7 +98,7 @@ index beb1aef..4430658 100644
          if (tracks[i].type == MATROSKA_TRACK_TYPE_SUBTITLE &&
              tracks[i].stream->discard != AVDISCARD_ALL) {
              index_sub = av_index_search_timestamp(
-@@ -2959,8 +2954,18 @@ static int matroska_read_seek(AVFormatContext *s, int stream_index,
+@@ -2963,8 +2958,18 @@ static int matroska_read_seek(AVFormatContext *s, int stream_index,
          }
      }
  
@@ -169,7 +170,7 @@ diff --git a/libavformat/utils.c b/libavformat/utils.c
 index b1f7909..5b15baa 100644
 --- a/libavformat/utils.c
 +++ b/libavformat/utils.c
-@@ -1276,6 +1276,8 @@ static int read_frame_internal(AVFormatContext *s, AVPacket *pkt)
+@@ -1279,6 +1279,8 @@ static int read_frame_internal(AVFormatContext *s, AVPacket *pkt)
          if (ret < 0) {
              if (ret == AVERROR(EAGAIN))
                  return ret;
@@ -410,7 +411,7 @@ diff --git a/libavformat/utils.c b/libavformat/utils.c
 index 5b15baa..03d46f5 100644
 --- a/libavformat/utils.c
 +++ b/libavformat/utils.c
-@@ -2317,6 +2317,41 @@ static void estimate_timings_from_bit_rate(AVFormatContext *ic)
+@@ -2323,6 +2323,41 @@ static void estimate_timings_from_bit_rate(AVFormatContext *ic)
  #define DURATION_MAX_READ_SIZE 250000LL
  #define DURATION_MAX_RETRY 4
  
@@ -452,7 +453,7 @@ index 5b15baa..03d46f5 100644
  /* only usable for MPEG-PS streams */
  static void estimate_timings_from_pts(AVFormatContext *ic, int64_t old_offset)
  {
-@@ -2467,6 +2502,10 @@ static void estimate_timings(AVFormatContext *ic, int64_t old_offset)
+@@ -2473,6 +2508,10 @@ static void estimate_timings(AVFormatContext *ic, int64_t old_offset)
           * the components */
          fill_all_stream_timings(ic);
          ic->duration_estimation_method = AVFMT_DURATION_FROM_STREAM;
@@ -478,7 +479,7 @@ diff --git a/libavformat/mov.c b/libavformat/mov.c
 index 12fa707..6042517 100644
 --- a/libavformat/mov.c
 +++ b/libavformat/mov.c
-@@ -3725,8 +3725,8 @@ static AVIndexEntry *mov_find_next_sample(AVFormatContext *s, AVStream **st)
+@@ -3730,8 +3730,8 @@ static AVIndexEntry *mov_find_next_sample(AVFormatContext *s, AVStream **st)
              if (!sample || (!s->pb->seekable && current_sample->pos < sample->pos) ||
                  (s->pb->seekable &&
                   ((msc->pb != s->pb && dts < best_dts) || (msc->pb == s->pb &&
@@ -585,7 +586,7 @@ diff --git a/libavcodec/h264.c b/libavcodec/h264.c
 index ba5bb40..02f2179 100644
 --- a/libavcodec/h264.c
 +++ b/libavcodec/h264.c
-@@ -1096,6 +1096,7 @@ void ff_h264_flush_change(H264Context *h)
+@@ -1097,6 +1097,7 @@ void ff_h264_flush_change(H264Context *h)
      h->list_count = 0;
      h->current_slice = 0;
      h->mmco_reset = 1;
@@ -597,7 +598,7 @@ diff --git a/libavcodec/h264.h b/libavcodec/h264.h
 index cb7e6f9..f819465 100644
 --- a/libavcodec/h264.h
 +++ b/libavcodec/h264.h
-@@ -742,6 +742,8 @@ typedef struct H264Context {
+@@ -743,6 +743,8 @@ typedef struct H264Context {
      int luma_weight_flag[2];    ///< 7.4.3.2 luma_weight_lX_flag
      int chroma_weight_flag[2];  ///< 7.4.3.2 chroma_weight_lX_flag
  
@@ -610,7 +611,7 @@ diff --git a/libavcodec/h264_slice.c b/libavcodec/h264_slice.c
 index c46cc24..c764226 100644
 --- a/libavcodec/h264_slice.c
 +++ b/libavcodec/h264_slice.c
-@@ -1189,6 +1189,7 @@ static int h264_slice_header_init(H264Context *h, int reinit)
+@@ -1192,6 +1192,7 @@ static int h264_slice_header_init(H264Context *h, int reinit)
          ff_h264_free_tables(h, 0);
      h->first_field           = 0;
      h->prev_interlaced_frame = 1;
@@ -652,7 +653,7 @@ diff --git a/libavformat/utils.c b/libavformat/utils.c
 index 03d46f5..efd86a4 100644
 --- a/libavformat/utils.c
 +++ b/libavformat/utils.c
-@@ -1585,6 +1585,11 @@ void ff_read_frame_flush(AVFormatContext *s)
+@@ -1591,6 +1591,11 @@ void ff_read_frame_flush(AVFormatContext *s)
      }
  }
  
@@ -680,7 +681,7 @@ diff --git a/configure b/configure
 index 2f36354..07376d5 100755
 --- a/configure
 +++ b/configure
-@@ -4912,22 +4912,24 @@ if enabled libdc1394; then
+@@ -4916,22 +4916,24 @@ if enabled libdc1394; then
      die "ERROR: No version of libdc1394 found "
  fi
  
