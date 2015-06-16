@@ -17,12 +17,12 @@
 ################################################################################
 
 PKG_NAME="Qt4"
-PKG_VERSION="4.8.6"
+PKG_VERSION="4.8.7"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="http://qt-project.org"
-PKG_URL="http://download.qt.io/archive/qt/4.8/${PKG_VERSION}/qt-everywhere-opensource-src-${PKG_VERSION}.tar.gz"
+PKG_URL="http://download.qt.io/official_releases/qt/4.8/${PKG_VERSION}/qt-everywhere-opensource-src-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain glib zlib libressl libpng"
 PKG_PRIORITY="optional"
 PKG_SECTION="devel"
