@@ -25,7 +25,6 @@
 ################################################################################
 
 # default GPU memory split (do not change if you do not know what you are doing)
-
   gpu_mem=200
 
 # SDRAM size based GPU memory split, uncomment and setup to override 'gpu_mem'
@@ -89,7 +88,7 @@
 # hdmi_drive=1
 
 # Force HDMI even if unplugged or powered off
- hdmi_force_hotplug=1
+  hdmi_force_hotplug=1
 
 # Doesn't sent initial active source message.
 # Avoids bringing CEC (enabled TV) out of standby and channel switch when
@@ -117,6 +116,15 @@
 
 # Required for hyperion / lightberry
   dtparam=spi=on
+
+# Uncomment to enable the sdhost driver
+# dtoverlay=sdhost
+
+# Uncomment to enable HiFiBerry overlay
+# NOTE: You must disable the lirc-rpi overlay (or change lirc GPIO pin) for HiFiBerry to work correctly
+# dtoverlay=hifiberry-amp
+# dtoverlay=hifiberry-dacplus
+# dtoverlay=hifiberry-digi
 
 ################################################################################
 # End of default configuration
