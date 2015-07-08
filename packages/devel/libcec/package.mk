@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="libcec"
-PKG_VERSION="libcec-3.0.0-repack"
+PKG_VERSION="libcec-3.0.1"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
