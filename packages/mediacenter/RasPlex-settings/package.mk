@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="RasPlex-settings"
-PKG_VERSION="e7f3f90f495fda29bb0fd0c8d1ac81cd6e876afb"
+PKG_VERSION="670a2e67d856fae504e3182e576922e06f6ee354"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="prop."
