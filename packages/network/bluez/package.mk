@@ -72,6 +72,17 @@ post_makeinstall_target() {
   rm -rf $INSTALL/usr/bin/bluemoon
   rm -rf $INSTALL/usr/bin/ciptool
   rm -rf $INSTALL/usr/share/dbus-1
+
+  rm -rf $INSTALL/etc/bluetooth
+    ln -sf /storage/.config/bluetooth $INSTALL/etc/bluetooth
+
+  mkdir -p $INSTALL/usr/config
+    cp -PR $PKG_DIR/config/* $INSTALL/usr/config
+
+  mkdir -p $INSTALL/usr/config/bluetooth
+    cp -PR $ROOT/$PKG_BUILD/src/main.conf $INSTALL/usr/config/bluetooth
+    cp -PR $ROOT/$PKG_BUILD/profiles/proximity/proximity.conf $INSTALL/usr/config/bluetooth
+    cp -PR $ROOT/$PKG_BUILD/profiles/network/network.conf $INSTALL/usr/config/bluetooth
 }
 
 post_install() {
