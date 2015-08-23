@@ -1,8 +1,7 @@
 [Unit]
 Description=Hyperion daemon
 ConditionPathExists=/storage/.cache/services/hyperion.conf
-Before=plexht.service
-After=graphical.target hyperion-defaults.service
+After=plexht.service hyperion-defaults.service
 Requires=hyperion-defaults.service
 
 [Service]
