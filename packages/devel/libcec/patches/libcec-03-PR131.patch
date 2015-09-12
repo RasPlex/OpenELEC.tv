@@ -1,0 +1,24 @@
+From 9a252570dc3ca1f5b92a48542e29b2722550e670 Mon Sep 17 00:00:00 2001
+From: Erwan LOUET <erwan.louet@orange.com>
+Date: Fri, 4 Sep 2015 15:34:19 +0200
+Subject: [PATCH] fixing initialisation issue found on Raspberry Pi with
+ Buildroot
+
+---
+ src/libcec/adapter/RPi/RPiCECAdapterCommunication.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/libcec/adapter/RPi/RPiCECAdapterCommunication.cpp b/src/libcec/adapter/RPi/RPiCECAdapterCommunication.cpp
+index 6f0804d..95b4fef 100644
+--- a/src/libcec/adapter/RPi/RPiCECAdapterCommunication.cpp
++++ b/src/libcec/adapter/RPi/RPiCECAdapterCommunication.cpp
+@@ -71,7 +71,8 @@ CRPiCECAdapterCommunication::CRPiCECAdapterCommunication(IAdapterCommunicationCa
+     m_bLogicalAddressChanged(false),
+     m_previousLogicalAddress(CECDEVICE_FREEUSE),
+     m_bLogicalAddressRegistered(false),
+-    m_bDisableCallbacks(false)
++    m_bDisableCallbacks(false),
++    m_bInitialised(false)
+ {
+   m_queue = new CRPiCECAdapterMessageQueue(this);
+ }
