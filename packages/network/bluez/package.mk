@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="bluez"
-PKG_VERSION="5.34"
+PKG_VERSION="5.35"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
