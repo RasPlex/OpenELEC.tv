@@ -42,7 +42,8 @@ make_target() {
        ARCH=$TARGET_ARCH \
        KSRC=$(kernel_path) \
        CROSS_COMPILE=$TARGET_PREFIX \
-       CONFIG_POWER_SAVING=n
+       CONFIG_POWER_SAVING=n \
+       CONFIG_HW_PWRP_DETECTION=y
 }
 
 makeinstall_target() {
