@@ -36,6 +36,8 @@ namespace :build do
     sh "mkdir -p #{build_dir}"
 
     work_dir = "#{root_dir}/#{build_dir}/plexht-#{$config['version']}"
+    sh "mkdir -p #{work_dir}"
+
     File.open("#{work_dir}/GitRevision.txt", 'w') { |file| file.write($config['version']) }
     version = $config['version']
     if $config['version'] == 'wip'
@@ -47,7 +49,11 @@ namespace :build do
     else
       sh "rm -rf #{root_dir}/#{build_dir}/plexht-*"
       sh "mkdir -p #{work_dir}"
+      cwd = Dir.pwd
+      Dir.chdir(work_dir)
       sh "git --work-tree=#{work_dir}  --git-dir=#{root_dir}/plex-home-theater/.git checkout #{$config['version']} -- #{work_dir}"
+      sh "touch #{work_dir}/.openelec-unpack"
+      Dir.chdir(cwd)
     end
 
     File.open("#{work_dir}/rasplex_version.txt", 'w') { |file| file.write($config['version'].gsub("RP-","")) }
