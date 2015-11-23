@@ -1,0 +1,34 @@
+diff --git a/src/libcec/platform/drm/drm-edid.cpp b/src/libcec/platform/drm/drm-edid.cpp
+index 279282b..a69c59a 100644
+--- a/src/libcec/platform/drm/drm-edid.cpp.orig   2015-11-19 00:51:35.971880999 +0100
++++ b/src/libcec/platform/drm/drm-edid.cpp        2015-11-19 00:52:06.444605999 +0100
+@@ -118,7 +118,11 @@
+           buf[iPtr++] = c;
+       }
+   
+-      iPA = CEDIDParser::GetPhysicalAddressFromEDID(buf, iPtr);
++      if (iPtr)
++      {
++        iPA = CEDIDParser::GetPhysicalAddressFromEDID(buf, iPtr);
++      }
++
+       fclose(fp);
+     }
+   }
+
+diff --git a/src/libcec/platform/util/edid.h b/src/libcec/platform/util/edid.h
+index 9a49c44..dbe04de 100644
+--- a/src/libcec/platform/util/edid.h
++++ b/src/libcec/platform/util/edid.h
+@@ -50,6 +50,11 @@ namespace PLATFORM
+     {
+       uint16_t iPA(0);
+
++      if (size < 4) 
++      {
++        return iPA;
++      }
++
+       for (size_t iPtr = 0; iPtr < size - 4; iPtr++)
+       {
+         if (data[iPtr]     == 0x03 &&
