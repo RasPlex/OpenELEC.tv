@@ -52,6 +52,7 @@ namespace :build do
       cwd = Dir.pwd
       Dir.chdir(work_dir)
       sh "git --work-tree=#{work_dir}  --git-dir=#{root_dir}/plex-home-theater/.git checkout #{$config['version']} -- #{work_dir}"
+      sh "git --work-tree=#{work_dir}  --git-dir=#{root_dir}/plex-home-theater/.git show-ref #{$config['version']} > #{work_dir}/GitRevision.txt"
       sh "touch #{work_dir}/.openelec-unpack"
       Dir.chdir(cwd)
     end
