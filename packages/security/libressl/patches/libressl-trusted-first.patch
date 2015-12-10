@@ -1,0 +1,48 @@
+diff -ur libressl-2.1.8/apps/apps.c libressl-2.1.8.patch/apps/apps.c
+--- libressl-2.1.8/apps/apps.c	2015-10-15 23:41:17.000000000 +0200
++++ libressl-2.1.8.patch/apps/apps.c	2015-12-05 14:04:26.414403631 +0100
+@@ -2030,6 +2030,8 @@
+ 		flags |= X509_V_FLAG_NOTIFY_POLICY;
+ 	else if (!strcmp(arg, "-check_ss_sig"))
+ 		flags |= X509_V_FLAG_CHECK_SS_SIGNATURE;
++	else if (!strcmp(arg, "-trusted_first"))
++		flags |= X509_V_FLAG_TRUSTED_FIRST;
+ 	else
+ 		return 0;
+ 
+diff -ur libressl-2.1.8/crypto/x509/x509_vfy.c libressl-2.1.8.patch/crypto/x509/x509_vfy.c
+--- libressl-2.1.8/crypto/x509/x509_vfy.c	2015-10-15 23:41:17.000000000 +0200
++++ libressl-2.1.8.patch/crypto/x509/x509_vfy.c	2015-12-05 14:07:22.423974736 +0100
+@@ -208,6 +208,20 @@
+ 		if (ctx->check_issued(ctx, x, x))
+ 			break;
+ 
++		/* If asked see if we can find issuer in trusted store first */
++		if (ctx->param->flags & X509_V_FLAG_TRUSTED_FIRST) {
++			ok = ctx->get_issuer(&xtmp, ctx, x);
++			if (ok < 0)
++				return ok;
++			/* If successful for now free up cert so it
++			 * will be picked up again later.
++			 */
++			if (ok > 0) {
++				X509_free(xtmp);
++				break;
++			}
++		}
++
+ 		/* If we were passed a cert chain, use it first */
+ 		if (ctx->untrusted != NULL) {
+ 			xtmp = find_issuer(ctx, sktmp, x);
+diff -ur libressl-2.1.8/include/openssl/x509_vfy.h libressl-2.1.8.patch/include/openssl/x509_vfy.h
+--- libressl-2.1.8/include/openssl/x509_vfy.h	2015-10-15 23:41:17.000000000 +0200
++++ libressl-2.1.8.patch/include/openssl/x509_vfy.h	2015-12-05 14:05:15.418199760 +0100
+@@ -383,6 +383,8 @@
+ #define X509_V_FLAG_USE_DELTAS			0x2000
+ /* Check selfsigned CA signature */
+ #define X509_V_FLAG_CHECK_SS_SIGNATURE		0x4000
++/* Use trusted store first */
++#define X509_V_FLAG_TRUSTED_FIRST		0x8000
+ 
+ 
+ #define X509_VP_FLAG_DEFAULT			0x1
