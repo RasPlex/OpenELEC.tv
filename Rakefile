@@ -22,7 +22,7 @@ namespace :build do
   task :kernel do
 
     kernel_pkgs = ["linux", "linux-drivers", "initramfs", "busybox", "bcm2835-bootloader", "bcm2835-driver"]
-    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['oeversion']}"
+    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['osversion']}-#{$config['oeversion']}"
     kernel_pkgs.each do |pkg|
       sh "rm -rf #{build_dir}/.stamps/#{pkg}"
     end
@@ -31,7 +31,7 @@ namespace :build do
   desc "Force a (re)build full PHT package"
   task :plex => [:info] do | t, args |
 
-    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['oeversion']}"
+    build_dir = "build.#{$config['distro']}-#{$config['project']}.#{$config['arch']}-#{$config['osversion']}-#{$config['oeversion']}"
     sh "rm -rf #{build_dir}/.stamps/plexht"
     sh "mkdir -p #{build_dir}"
 

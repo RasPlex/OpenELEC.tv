@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="openssh"
-PKG_VERSION="6.8p1"
+PKG_VERSION="7.1p1"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
@@ -66,6 +66,9 @@ post_makeinstall_target() {
 
   mkdir -p $INSTALL/usr/share/services
     cp -P $PKG_DIR/default.d/*.conf $INSTALL/usr/share/services
+
+  sed -i $INSTALL/etc/ssh/sshd_config -e "s|^#PermitRootLogin.*|PermitRootLogin yes|g"
+  echo "PubkeyAcceptedKeyTypes +ssh-dss" >> $INSTALL/etc/ssh/sshd_config
 }
 
 post_install() {

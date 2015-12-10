@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="hdparm"
-PKG_VERSION="9.45"
+PKG_VERSION="9.48"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="BSD"
@@ -33,5 +33,3 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 PKG_MAKE_OPTS_TARGET="binprefix=/usr sbindir=/usr/bin"
-
-export LDFLAGS="$CFLAGS $LDFLAGS -fwhole-program"

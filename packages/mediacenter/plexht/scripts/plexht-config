@@ -17,6 +17,31 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+
+# hack: make addon-bins executable
+# done in kodi on addon install. but just in case..
+chmod +x /storage/.plexht/addons/*/bin/*
+
+# hack: update RSSnews.xml in userdata
+if [ -f /storage/.plexht/userdata/RssFeeds.xml ]; then
+  sed -e "s,http://openelec.tv/news?format=feed&type=rss,http://feeds.openelec.tv/news,g" \
+      -i /storage/.plexht/userdata/RssFeeds.xml
+fi
+
+# setup Kodi sources
+if [ ! -f $HOME/.plexht/userdata/sources.xml ]; then
+  if [ -f /usr/share/XBMC/config/sources.xml ]; then
+    cp /usr/share/XBMC/config/sources.xml $HOME/.plexht/userdata
+  fi
+fi
+
+# common setup guisettings
+if [ ! -f $HOME/.plexht/userdata/guisettings.xml ] ; then
+  if [ -f /usr/share/XBMC/config/guisettings.xml ]; then
+    cp /usr/share/XBMC/config/guisettings.xml $HOME/.plexht/userdata
+  fi
+fi
+
 if [ -e /run/lirc/lircd.irtrans ]; then
   PLEXHT_ARGS="--lircdev /run/lirc/lircd.irtrans"
 else

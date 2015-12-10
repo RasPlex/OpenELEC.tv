@@ -1,6 +1,6 @@
-diff -Naur bluez-5.33/Makefile.tools bluez-5.33.patch/Makefile.tools
---- bluez-5.33/Makefile.tools	2015-07-30 21:17:18.000000000 +0200
-+++ bluez-5.33.patch/Makefile.tools	2015-08-14 16:04:54.737818800 +0200
+diff -Naur bluez-5.35/Makefile.tools bluez-5.35.patch/Makefile.tools
+--- bluez-5.35/Makefile.tools	2015-09-04 03:19:36.000000000 +0200
++++ bluez-5.35.patch/Makefile.tools	2015-10-02 15:28:03.406835739 +0200
 @@ -8,7 +8,7 @@
  					client/gatt.h client/gatt.c \
  					monitor/uuid.h monitor/uuid.c

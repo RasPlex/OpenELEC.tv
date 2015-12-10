@@ -23,8 +23,8 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.rasplex.com"
 PKG_URL="https://github.com/RasPlex/RasPlex/archive/master.zip"
-PKG_DEPENDS_TARGET="toolchain ninja:host boost Python zlib bzip2 systemd pciutils lzo pcre swig:host libass enca curl rtmpdump fontconfig fribidi tinyxml libjpeg-turbo libpng tiff freetype jasper libogg libcdio libmodplug libmpeg2 taglib libxml2 libxslt yajl sqlite libvorbis libsamplerate flac libmad ffmpeg breakpad"
-PKG_DEPENDS_HOST="toolchain"
+PKG_DEPENDS_TARGET="toolchain plexht:host boost Python zlib bzip2 systemd pciutils lzo pcre swig:host libass enca curl rtmpdump fontconfig fribidi tinyxml libjpeg-turbo libpng tiff freetype jasper libogg libcdio libmodplug libmpeg2 taglib libxml2 libxslt yajl sqlite libvorbis libsamplerate flac libmad ffmpeg breakpad"
+PKG_DEPENDS_HOST="ninja:host lzo:host SDL:host SDL_image:host"
 PKG_PRIORITY="optional"
 PKG_SECTION="mediacenter"
 PKG_SHORTDESC="plexht: The Plex Home Theater port for the Raspberry Pi mini computer"
@@ -44,9 +44,6 @@ fi
 # for dbus support
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET dbus"
 
-# needed for hosttools (Texturepacker)
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET lzo:host SDL:host SDL_image:host plexht:host"
-
 if [ $PROJECT = "RPi" -o $PROJECT = "RPi2" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET remotepi-board hyperion"
 fi
@@ -56,6 +53,7 @@ if [ "$DISPLAYSERVER" = "x11" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libX11 libXext libdrm"
 # for libXrandr support
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libXrandr"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET SDL"
 fi
 
 if [ ! "$OPENGL" = "no" ]; then
@@ -66,11 +64,6 @@ fi
 if [ "$OPENGLES_SUPPORT" = yes ]; then
 # for OpenGL-ES support
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $OPENGLES"
-fi
-
-if [ "$SDL_SUPPORT" = yes ]; then
-# for SDL support
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET SDL2"
 fi
 
 if [ "$ALSA_SUPPORT" = yes ]; then
@@ -93,15 +86,9 @@ if [ "$CEC_SUPPORT" = yes ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libcec"
 fi
 
-if [ "$KODI_SCR_RSXS" = yes ]; then
-# for RSXS Screensaver support
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libXt libXmu"
-# fix build of RSXS Screensaver support if not using libiconv
-  export jm_cv_func_gettimeofday_clobber=no
-fi
-
-if [ "$FAAC_SUPPORT" = yes ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET faac"
+if [ "$JOYSTICK_SUPPORT" = yes ]; then
+# for Joystick support
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET SDL2"
 fi
 
 if [ "$KODI_BLURAY_SUPPORT" = yes ]; then
@@ -148,6 +135,8 @@ if [ ! "$KODIPLAYER_DRIVER" = default ]; then
                       -I$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux"
     KODI_CFLAGS="$KODI_CFLAGS $BCM2835_INCLUDES"
     KODI_CXXFLAGS="$KODI_CXXFLAGS $BCM2835_INCLUDES"
+  elif [ "$KODIPLAYER_DRIVER" = libfslvpuwrap ]; then
+    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gpu-viv-g2d"
   fi
 fi
 
@@ -300,8 +289,6 @@ makeinstall_target() {
 
   mkdir -p $INSTALL/usr/lib/plexht
     cp $PKG_DIR/scripts/plexht-config $INSTALL/usr/lib/plexht
-    cp $PKG_DIR/scripts/plexht-hacks $INSTALL/usr/lib/plexht
-    cp $PKG_DIR/scripts/plexht-sources $INSTALL/usr/lib/plexht
 
   mkdir -p $INSTALL/usr/lib/openelec
     cp $PKG_DIR/scripts/systemd-addon-wrapper $INSTALL/usr/lib/openelec
@@ -312,12 +299,8 @@ makeinstall_target() {
     cp $PKG_DIR/scripts/setwakeup.sh $INSTALL/usr/bin
     cp ../tools/EventClients/Clients/XBMC\ Send/xbmc-send.py $INSTALL/usr/bin/xbmc-send
 
-  if [ ! "$KODI_SCR_RSXS" = yes ]; then
-    rm -rf $INSTALL/usr/share/XBMC/addons/screensaver.rsxs.*
-  fi
-
-  if [ ! "$KODI_VIS_PROJECTM" = yes ]; then
-    rm -rf $INSTALL/usr/share/XBMC/addons/visualization.projectm
+  if [ ! "$DISPLAYSERVER" = "x11" ]; then
+    rm -rf $INSTALL/usr/lib/plexht/xbmc-xrandr
   fi
 
   rm -rf $INSTALL/usr/share/applications
@@ -328,7 +311,9 @@ makeinstall_target() {
   mkdir -p $INSTALL/usr/share/XBMC/addons
     cp -R $PKG_DIR/config/os.openelec.tv $INSTALL/usr/share/XBMC/addons
     $SED "s|@OS_VERSION@|$OS_VERSION|g" -i $INSTALL/usr/share/XBMC/addons/os.openelec.tv/addon.xml
-	
+#    cp -R $PKG_DIR/config/repository.openelec.tv $INSTALL/usr/share/XBMC/addons
+#    $SED "s|@ADDON_URL@|$ADDON_URL|g" -i $INSTALL/usr/share/XBMC/addons/repository.openelec.tv/addon.xml
+
 # fix skin.plex
   mv $INSTALL/usr/share/XBMC/addons/skin.plex/Colors $INSTALL/usr/share/XBMC/addons/skin.plex/colors
   mv $INSTALL/usr/share/XBMC/addons/skin.plex/Sounds $INSTALL/usr/share/XBMC/addons/skin.plex/sounds
@@ -344,8 +329,11 @@ makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/python"$PYTHON_VERSION"/site-packages/xbmc
     cp -R ../tools/EventClients/lib/python/* $INSTALL/usr/lib/python"$PYTHON_VERSION"/site-packages/xbmc
 
-# install project specific configs
   mkdir -p $INSTALL/usr/share/XBMC/config
+    cp $PKG_DIR/config/guisettings.xml $INSTALL/usr/share/XBMC/config
+    cp $PKG_DIR/config/sources.xml $INSTALL/usr/share/XBMC/config
+
+# install project specific configs
     if [ -f $PROJECT_DIR/$PROJECT/plexht/guisettings.xml ]; then
       cp -R $PROJECT_DIR/$PROJECT/plexht/guisettings.xml $INSTALL/usr/share/XBMC/config
     fi
@@ -380,8 +368,6 @@ post_install() {
 # enable default services
   enable_service plexht-autostart.service
   enable_service plexht-cleanlogs.service
-  enable_service plexht-hacks.service
-  enable_service plexht-sources.service
   enable_service plexht-halt.service
   enable_service plexht-poweroff.service
   enable_service plexht-reboot.service

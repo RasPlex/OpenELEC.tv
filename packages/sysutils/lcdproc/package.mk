@@ -24,7 +24,7 @@ PKG_LICENSE="GPL"
 PKG_SITE="http://lcdproc.org/"
 # PKG_URL="$SOURCEFORGE_SRC/lcdproc/lcdproc/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain libusb libhid libftdi"
+PKG_DEPENDS_TARGET="toolchain libusb libhid libftdi1"
 PKG_PRIORITY="optional"
 PKG_SECTION="system"
 PKG_SHORTDESC="lcdproc: Software to display system information from your Linux/*BSD box on a LCD"
@@ -36,6 +36,16 @@ PKG_AUTORECONF="yes"
 if [ "$IRSERVER_SUPPORT" = yes ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET irserver"
 fi
+
+IFS=$','
+for i in $LCD_DRIVER; do
+  case $i in
+    glcd) PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET serdisplib"
+      ;;
+    *)
+  esac
+done
+unset IFS
 
 PKG_CONFIGURE_OPTS_TARGET="--enable-libusb --enable-drivers=$LCD_DRIVER,!curses,!svga --enable-seamless-hbars"
 
@@ -59,6 +69,7 @@ post_makeinstall_target() {
       -e "s|^#Hello=\"   LCDproc!\"|Hello=\"$DISTRONAME\"|" \
       -e "s|^#GoodBye=\"Thanks for using\"|GoodBye=\"Thanks for using\"|" \
       -e "s|^#GoodBye=\"   LCDproc!\"|GoodBye=\"$DISTRONAME\"|" \
+      -e "s|^#normal_font=.*$|normal_font=/usr/share/fonts/liberation/LiberationMono-Bold.ttf|" \
       -i $INSTALL/etc/LCDd.conf
 
     mkdir -p $INSTALL/usr/lib/openelec

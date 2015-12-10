@@ -2,4 +2,5 @@ distro:    RasPlex
 arch:      arm
 type:      release # debug or release
 oeversion: devel # oe version
+osversion: 6.0 # os version
 assembler: ninja
