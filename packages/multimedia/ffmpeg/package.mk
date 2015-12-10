@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="ffmpeg"
-PKG_VERSION="2.4.11"
+PKG_VERSION="2.4.12"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="LGPLv2.1+"
