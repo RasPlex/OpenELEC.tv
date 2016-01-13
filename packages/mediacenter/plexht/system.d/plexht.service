@@ -16,6 +16,7 @@ KillMode=process
 TimeoutStopSec=5
 Restart=always
 RestartSec=2
+RestartPreventExitStatus=64 66
 StartLimitInterval=0
 LimitNOFILE=16384
 
