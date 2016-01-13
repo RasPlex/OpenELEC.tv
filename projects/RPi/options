@@ -151,6 +151,6 @@
     ADDITIONAL_DRIVERS="$ADDITIONAL_DRIVERS"
 
   # set up serial console when building a development image
-    if [ "$DEVEL_VERSION" = "devel" ] ; then
-      EXTRA_CMDLINE="console=ttyAMA0,115200"
-    fi
+  # if [ "$DEVEL_VERSION" = "devel" ] ; then
+  #   EXTRA_CMDLINE="console=ttyAMA0,115200"
+  # fi
