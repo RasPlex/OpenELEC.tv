@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="hyperion"
-PKG_VERSION="90fa730e2bec140e2372bbfa77c6009a3d1c0bcb"
+PKG_VERSION="1734e9a6010789b31120f9630745b731da5109cd"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
