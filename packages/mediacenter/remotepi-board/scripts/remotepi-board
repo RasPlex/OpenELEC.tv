@@ -39,7 +39,8 @@ while true; do
   power=$(cat /sys/class/gpio/gpio$GPIOpin1/value)
   if [ $power != 0 ]; then
 	touch /tmp/.remotepi-board-shutdown
-	/usr/bin/xbmc-send --host=127.0.0.1 --port=9778 --action="Xbmc.ShutDown"
+	systemctl stop plexht
+	systemctl poweroff
 	break
   fi
 done
